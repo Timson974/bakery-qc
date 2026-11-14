@@ -611,6 +611,71 @@ const PRODUCTS = [
         'Shorter fermentation may help control browning rate'
       ]
     }
+  },
+  {
+    id: 'country_sourdough',
+    icon: '🫙',
+    name: 'Country Sourdough',
+    desc: 'Country sourdough — round scored loaf, dark crackled crust',
+    thresholds: {
+      underbaked: { max: 55 },
+      proper:     { min: 55, max: 72 },
+      overbaked:  { min: 72 }
+    },
+    advice: {
+      underbaked: [
+        'Crust needs more colour — extend bake 5–8 minutes',
+        'Ensure deck temperature is at least 230°C for final dry-out',
+        'Knock on base — should sound hollow before pulling',
+        'Open oven damper in last 5 min to aid crust drying'
+      ],
+      proper: [
+        'Deep crackled crust achieved — correct Maillard development',
+        'Check internal temperature: 96–98°C at centre',
+        'Allow to cool on wire rack minimum 45 minutes before cutting'
+      ],
+      overbaked: [
+        'Reduce oven temperature 10–15°C after first 20 minutes',
+        'Country sourdough has high water content — monitor colour closely in last 10 min',
+        'If crust darkens too fast, tent loosely with paper',
+        'Check thermostat calibration — oven may be running hot'
+      ]
+    }
+  },
+  {
+    id: 'tiger_bread',
+    icon: '🐯',
+    name: 'Tiger Bread',
+    desc: 'Tiger bread — white dough, rice paste topping, oval loaf',
+    // Tiger bread: rice paste topping gives distinctive crackled orange pattern.
+    // Sampling zone: top_centre captures the characteristic tiger pattern best.
+    // Calibrated from production photo: proper = top_centre ~58.7
+    // Underbaked tiger bread is pale cream/yellow; proper is deep orange-brown.
+    sampleZone: 'top',  // override: use top-centre zone (tiger pattern on top)
+    thresholds: {
+      underbaked: { max: 44 },
+      proper:     { min: 44, max: 68 },
+      overbaked:  { min: 68 }
+    },
+    advice: {
+      underbaked: [
+        'Rice paste topping needs more heat to develop colour — extend bake 4–6 minutes',
+        'Target deep orange-brown pattern, not pale yellow',
+        'Increase top heat if deck oven — tiger colour comes from radiant heat above',
+        'Check rice paste consistency — too thick will colour unevenly'
+      ],
+      proper: [
+        'Tiger pattern is correct deep orange — good rice paste development',
+        'Crust should be firm and crisp when tapped',
+        'Allow 20–30 minutes cooling before slicing'
+      ],
+      overbaked: [
+        'Rice paste is burning — reduce top heat or shorten bake by 3–5 minutes',
+        'Tiger pattern should be orange-brown, not dark brown/black',
+        'Lower oven temperature 10°C for next batch',
+        'Check rice paste recipe — excess sugar accelerates browning'
+      ]
+    }
   }
 ];
 
@@ -707,11 +772,12 @@ function showSampleOverlay() {
   const w = zone.offsetWidth;
   const h = zone.offsetHeight;
 
-  // Lower-centre zone — avoids flour-dusted top crust
+  // Sample zone: lower-centre by default, top-centre for tiger bread
+  const usesTop = selectedProduct && selectedProduct.sampleZone === 'top';
   const sw = w * 0.50;
-  const sh = h * 0.45;
+  const sh = usesTop ? h * 0.40 : h * 0.45;
   const sx = (w - sw) / 2;
-  const sy = h * 0.45;
+  const sy = usesTop ? h * 0.05 : h * 0.45;
 
   overlay.style.left = sx + 'px';
   overlay.style.top  = sy + 'px';
@@ -733,12 +799,12 @@ function runAnalysis() {
   canvas.height = img.naturalHeight;
   ctx.drawImage(img, 0, 0);
 
-  // Sample lower-centre region (avoids flour-dusted top crust)
-  // Target: bottom 60% of frame, centre 50% width
+  // Sample zone: top-centre for tiger bread, lower-centre for all others
+  const usesTopZone = selectedProduct && selectedProduct.sampleZone === 'top';
   const sx = Math.floor(canvas.width  * 0.25);
-  const sy = Math.floor(canvas.height * 0.45);
+  const sy = usesTopZone ? Math.floor(canvas.height * 0.05) : Math.floor(canvas.height * 0.45);
   const sw = Math.floor(canvas.width  * 0.50);
-  const sh = Math.floor(canvas.height * 0.45);
+  const sh = usesTopZone ? Math.floor(canvas.height * 0.40) : Math.floor(canvas.height * 0.45);
 
   const data = ctx.getImageData(sx, sy, sw, sh).data;
   let r = 0, g = 0, b = 0, n = 0;
