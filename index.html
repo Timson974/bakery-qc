@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bakery QC</title>
+<style>
+  :root {
+    --bg: #1a1612;
+    --surface: #231f1a;
+    --surface2: #2d2820;
+    --border: #3d3528;
+    --text: #f0ead8;
+    --text-muted: #9a8e78;
+    --accent: #c8832a;
+    --accent-dim: #8a5a1c;
+    --underbaked: #4a7fcb;
+    --proper: #5aaa5a;
+    --overbaked: #cc4444;
+    --radius: 12px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+  }
+
+  /* ── App Shell ── */
+  #app {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  header {
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  header .logo { font-size: 22px; }
+  header h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.01em; }
+  header .sub { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+  /* ── Screens ── */
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* ── Product Select ── */
+  .section-title {
+    padding: 20px 20px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .product-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+
+  .product-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .product-card:active { background: var(--surface2); }
+  .product-card.selected {
+    border-color: var(--accent);
+    background: #2a2015;
+  }
+
+  .product-icon { font-size: 32px; line-height: 1; }
+
+  .product-info { flex: 1; }
+  .product-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .product-desc { font-size: 12px; color: var(--text-muted); }
+
+  .product-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: transparent;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .product-card.selected .product-check {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .btn-primary {
+    margin: auto 16px 24px;
+    padding: 15px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary:not(:disabled):active { opacity: 0.8; }
+
+  .btn-secondary {
+    padding: 12px 20px;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-secondary:active { opacity: 0.7; }
+
+  /* ── Camera Screen ── */
+  .cam-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .back-btn {
+    width: 36px; height: 36px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cam-title { font-size: 15px; font-weight: 600; }
+  .cam-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  .photo-zone {
+    margin: 0 16px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .photo-zone:hover, .photo-zone.drag-over { border-color: var(--accent); }
+  .photo-zone canvas, .photo-zone img.preview {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .photo-zone canvas { display: none; }
+
+  .photo-hint { font-size: 28px; }
+  .photo-hint-text { font-size: 13px; color: var(--text-muted); text-align: center; }
+
+  .photo-actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .photo-actions .btn-secondary { flex: 1; text-align: center; }
+
+  .sample-zone-info {
+    margin: 0 16px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .sample-zone-info .icon { font-size: 16px; flex-shrink: 0; }
+
+  /* Sample region overlay */
+  #sampleOverlay {
+    position: absolute;
+    border: 2.5px solid rgba(200,131,42,0.8);
+    border-radius: 6px;
+    pointer-events: none;
+    box-shadow: 0 0 0 1000px rgba(0,0,0,0.3);
+    display: none;
+  }
+  #sampleOverlay.visible { display: block; }
+
+  .btn-analyze {
+    margin: 8px 16px 24px;
+    padding: 15px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    display: none;
+  }
+  .btn-analyze.visible { display: block; }
+  .btn-analyze:active { opacity: 0.8; }
+
+  /* ── Result Screen ── */
+  .result-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .verdict-block {
+    margin: 0 16px 16px;
+    padding: 20px;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+  .verdict-block.underbaked { background: #0e1a2a; border: 2px solid var(--underbaked); }
+  .verdict-block.proper { background: #0e1e0e; border: 2px solid var(--proper); }
+  .verdict-block.overbaked { background: #1e0e0e; border: 2px solid var(--overbaked); }
+
+  .verdict-icon { font-size: 48px; }
+  .verdict-label {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .verdict-block.underbaked .verdict-label { color: var(--underbaked); }
+  .verdict-block.proper .verdict-label { color: var(--proper); }
+  .verdict-block.overbaked .verdict-label { color: var(--overbaked); }
+
+  .verdict-product { font-size: 13px; color: var(--text-muted); }
+
+  /* Color bar */
+  .color-analysis {
+    margin: 0 16px 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .color-analysis h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; }
+
+  .color-bar-container { margin-bottom: 12px; }
+  .color-bar-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .color-bar-track {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #c8d4e8, #d4a96a, #7a4a28, #3a1a0a);
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .color-bar-cursor {
+    position: absolute;
+    width: 3px;
+    height: 18px;
+    top: -5px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    transform: translateX(-50%);
+  }
+
+  .sampled-swatch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .swatch-box {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+  }
+  .swatch-values { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Advice */
+  .advice-block {
+    margin: 0 16px 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .advice-block h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
+  .advice-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .advice-list li {
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+  .advice-list li .bullet { flex-shrink: 0; color: var(--accent); font-weight: 700; }
+
+  .result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 16px 28px;
+    margin-top: auto;
+  }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #333;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 999;
+    transition: transform 0.25s ease;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Hidden input ── */
+  #fileInput { display: none; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <span class="logo">🔬</span>
+    <div>
+      <h1>Bakery QC</h1>
+      <div class="sub">Bake quality check</div>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Product Select -->
+  <div id="screenSelect" class="screen active">
+    <div class="section-title">Select product</div>
+    <div class="product-grid" id="productGrid"></div>
+    <button class="btn-primary" id="btnNext" disabled>Analyse →</button>
+  </div>
+
+  <!-- SCREEN 2: Photo -->
+  <div id="screenPhoto" class="screen">
+    <div class="cam-header">
+      <button class="back-btn" onclick="goTo('screenSelect')">‹</button>
+      <div>
+        <div class="cam-title" id="camTitle">—</div>
+        <div class="cam-subtitle">Take or upload a photo of the crust</div>
+      </div>
+    </div>
+
+    <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileInput').click()">
+      <img id="previewImg" class="preview" style="display:none">
+      <div id="photoHint" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <span class="photo-hint">📷</span>
+        <span class="photo-hint-text">Tap to take photo<br>or upload from gallery</span>
+      </div>
+      <div id="sampleOverlay"></div>
+    </div>
+
+    <div class="photo-actions">
+      <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">📂 Gallery</button>
+      <button class="btn-secondary" id="btnCamera">📷 Camera</button>
+    </div>
+
+    <div class="sample-zone-info">
+      <span class="icon">ℹ️</span>
+      <span>The orange frame samples the lower crust — away from flour-dusted top. Frame the loaf so its sides are visible in the lower half of the photo.</span>
+    </div>
+
+    <button class="btn-analyze" id="btnAnalyze">Analyse colour →</button>
+
+    <input type="file" id="fileInput" accept="image/*" capture="environment">
+    <canvas id="analysisCanvas" style="display:none"></canvas>
+  </div>
+
+  <!-- SCREEN 3: Result -->
+  <div id="screenResult" class="screen">
+    <div class="result-header">
+      <button class="back-btn" onclick="goTo('screenPhoto')">‹</button>
+      <div>
+        <div class="cam-title">Analysis result</div>
+        <div class="cam-subtitle" id="resultProduct">—</div>
+      </div>
+    </div>
+
+    <div class="verdict-block" id="verdictBlock">
+      <div class="verdict-icon" id="verdictIcon">—</div>
+      <div class="verdict-label" id="verdictLabel">—</div>
+      <div class="verdict-product" id="verdictProd">—</div>
+    </div>
+
+    <div class="color-analysis">
+      <h3>Colour reading</h3>
+      <div class="color-bar-container">
+        <div class="color-bar-label">
+          <span>Underbaked</span><span>Proper</span><span>Overbaked</span>
+        </div>
+        <div class="color-bar-track">
+          <div class="color-bar-cursor" id="colorCursor" style="left:50%"></div>
+        </div>
+      </div>
+      <div class="sampled-swatch">
+        <div class="swatch-box" id="swatchBox"></div>
+        <div class="swatch-values" id="swatchValues">—</div>
+      </div>
+    </div>
+
+    <div class="advice-block" id="adviceBlock">
+      <h3>Recommendations</h3>
+      <ul class="advice-list" id="adviceList"></ul>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-primary" onclick="newCheck()">New check</button>
+      <button class="btn-secondary" onclick="goTo('screenPhoto')">Retry photo</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── PRODUCT DEFINITIONS ──────────────────────────────────────────────
+// Color ranges: based on typical bread crust L* (lightness in CIELAB)
+// Underbaked: very light/pale (high L*, low saturation)
+// Proper: golden-brown (medium L*, warm hue)
+// Overbaked: very dark (low L*)
+// We'll use a simplified "darkness score" (0-100) from sampled RGB:
+// score = 100 - (L/255)*100  where L = 0.299R + 0.587G + 0.114B
+// Also use "warmth" = (R-B)/255 as secondary axis
+
+// CALIBRATED against real production photos (Nov 2026)
+// Sampling zone: lower sides of loaf (avoids flour dusting on top crust)
+// Darkness score = 100 - (luma/255)*100
+// Proper ranges derived from measured photos, all confirmed as correct bake:
+//   Ancient Loaf:        lower_side darkness 52–56%  → proper 44–65%
+//   Classic Sourdough:   lower_side darkness 40–42%  → proper 33–54%
+//   Rustic Sourdough:    lower_side darkness 46–58%  → proper 40–63%
+
+const PRODUCTS = [
+  {
+    id: 'ancient',
+    icon: '🌾',
+    name: 'Ancient Loaf',
+    desc: 'Ancient grain, 400g & 800g — dark dusted crust',
+    thresholds: {
+      underbaked: { max: 44 },
+      proper:     { min: 44, max: 65 },
+      overbaked:  { min: 65 }
+    },
+    advice: {
+      underbaked: [
+        'Increase deck temperature by 5–10°C',
+        'Extend bake time by 3–5 minutes',
+        'Check steam injection — excess steam prevents crust browning',
+        'Ensure oven is fully preheated before loading'
+      ],
+      proper: [
+        'Bake parameters are correct — maintain current settings',
+        'Monitor consistency across the batch',
+        'Log temperature and time for reference'
+      ],
+      overbaked: [
+        'Reduce deck temperature by 5–10°C',
+        'Shorten bake time by 2–4 minutes',
+        'Check oven calibration — thermostat may read low',
+        'Consider earlier steam-off to slow browning'
+      ]
+    }
+  },
+  {
+    id: 'ancient_bloomer',
+    icon: '🍞',
+    name: 'Ancient Bloomer',
+    desc: 'Ancient grain bloomer, 800g — scored oval',
+    thresholds: {
+      underbaked: { max: 42 },
+      proper:     { min: 42, max: 63 },
+      overbaked:  { min: 63 }
+    },
+    advice: {
+      underbaked: [
+        'Increase deck temperature by 5°C',
+        'Extend bake by 3–4 minutes',
+        'Check steam vent timing — open vent after first 15 min',
+        'Ensure scoring is deep enough to allow full oven spring'
+      ],
+      proper: [
+        'Colour and crust development are on target',
+        'Check score has opened evenly along the full length',
+        'Internal temperature should read 95–97°C'
+      ],
+      overbaked: [
+        'Reduce top heat by 5°C',
+        'Shorten bake by 2–3 minutes',
+        'Rotate trays halfway through if oven has hot spots',
+        'Check fermentation time — over-proofed dough browns faster'
+      ]
+    }
+  },
+  {
+    id: 'classic_sourdough',
+    icon: '🫓',
+    name: 'Classic Sourdough',
+    desc: 'Classic sourdough, 800g — scored oval, open crumb',
+    thresholds: {
+      underbaked: { max: 33 },
+      proper:     { min: 33, max: 54 },
+      overbaked:  { min: 54 }
+    },
+    advice: {
+      underbaked: [
+        'Increase deck temperature by 5°C',
+        'Extend bake by 3–5 minutes at lower steam',
+        'Ensure full oven spring before venting steam',
+        'Score depth may need adjustment — shallow scores trap moisture'
+      ],
+      proper: [
+        'Crust colour is on target',
+        'Check bottom crust — should be firm and evenly coloured',
+        'Internal temperature should read 96–98°C at centre'
+      ],
+      overbaked: [
+        'Reduce top heat by 5°C, maintain bottom heat',
+        'Shorten bake by 2–3 minutes',
+        'Load at consistent intervals to stabilise oven temperature',
+        'Check if proofing was too long — over-proofed dough browns faster'
+      ]
+    }
+  },
+  {
+    id: 'rustic_sourdough',
+    icon: '🌿',
+    name: 'Rustic Sourdough',
+    desc: 'Rustic sourdough, 400g & 800g — round, flour-dusted',
+    thresholds: {
+      underbaked: { max: 40 },
+      proper:     { min: 40, max: 63 },
+      overbaked:  { min: 63 }
+    },
+    advice: {
+      underbaked: [
+        'Increase stone/deck temperature — target 240°C',
+        'Extend bake by 5–8 minutes (high hydration needs longer dry-out)',
+        'Knock on base — hollow sound confirms doneness regardless of colour',
+        'Note: heavy flour dusting makes top crust appear lighter — check sides'
+      ],
+      proper: [
+        'Crust development is correct — good colour on sides and base',
+        'Internal temperature should read 96–98°C at centre',
+        'Allow 1 hour minimum cooling before cutting'
+      ],
+      overbaked: [
+        'Reduce deck temperature by 10°C after initial spring (first 15 min)',
+        'Cover with paper for final third of bake if crust darkening too fast',
+        'Check if oven has hot spots — rotate loaves halfway through',
+        'Shorter fermentation may help control browning rate'
+      ]
+    }
+  }
+];
+
+// ── STATE ────────────────────────────────────────────────────────────
+let selectedProduct = null;
+let photoLoaded = false;
+let lastResult = null;
+
+// ── INIT ─────────────────────────────────────────────────────────────
+function init() {
+  const grid = document.getElementById('productGrid');
+  PRODUCTS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.id = p.id;
+    card.innerHTML = `
+      <span class="product-icon">${p.icon}</span>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+      </div>
+      <div class="product-check">✓</div>
+    `;
+    card.addEventListener('click', () => selectProduct(p.id));
+    grid.appendChild(card);
+  });
+
+  document.getElementById('fileInput').addEventListener('change', onFileSelected);
+  document.getElementById('btnNext').addEventListener('click', goToCamera);
+  document.getElementById('btnAnalyze').addEventListener('click', runAnalysis);
+
+  // Camera button — tries capture="environment"
+  document.getElementById('btnCamera').addEventListener('click', () => {
+    const inp = document.getElementById('fileInput');
+    inp.setAttribute('capture', 'environment');
+    inp.click();
+  });
+}
+
+function selectProduct(id) {
+  selectedProduct = PRODUCTS.find(p => p.id === id);
+  document.querySelectorAll('.product-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.id === id);
+  });
+  document.getElementById('btnNext').disabled = false;
+}
+
+function goToCamera() {
+  if (!selectedProduct) return;
+  document.getElementById('camTitle').textContent = selectedProduct.name;
+  goTo('screenPhoto');
+}
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function newCheck() {
+  // Reset photo state
+  photoLoaded = false;
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('photoHint').style.display = 'flex';
+  document.getElementById('sampleOverlay').classList.remove('visible');
+  document.getElementById('btnAnalyze').classList.remove('visible');
+  document.getElementById('fileInput').value = '';
+  goTo('screenSelect');
+}
+
+// ── PHOTO HANDLING ───────────────────────────────────────────────────
+function onFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('photoHint').style.display = 'none';
+
+    img.onload = () => {
+      showSampleOverlay();
+      photoLoaded = true;
+      document.getElementById('btnAnalyze').classList.add('visible');
+    };
+  };
+  reader.readAsDataURL(file);
+}
+
+function showSampleOverlay() {
+  const zone = document.getElementById('photoZone');
+  const overlay = document.getElementById('sampleOverlay');
+  const w = zone.offsetWidth;
+  const h = zone.offsetHeight;
+
+  // Lower-centre zone — avoids flour-dusted top crust
+  const sw = w * 0.50;
+  const sh = h * 0.45;
+  const sx = (w - sw) / 2;
+  const sy = h * 0.45;
+
+  overlay.style.left = sx + 'px';
+  overlay.style.top  = sy + 'px';
+  overlay.style.width  = sw + 'px';
+  overlay.style.height = sh + 'px';
+  overlay.classList.add('visible');
+}
+
+// ── COLOUR ANALYSIS ──────────────────────────────────────────────────
+function runAnalysis() {
+  if (!photoLoaded || !selectedProduct) return;
+
+  const img = document.getElementById('previewImg');
+  const canvas = document.getElementById('analysisCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Draw full image to canvas
+  canvas.width  = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
+
+  // Sample lower-centre region (avoids flour-dusted top crust)
+  // Target: bottom 60% of frame, centre 50% width
+  const sx = Math.floor(canvas.width  * 0.25);
+  const sy = Math.floor(canvas.height * 0.45);
+  const sw = Math.floor(canvas.width  * 0.50);
+  const sh = Math.floor(canvas.height * 0.45);
+
+  const data = ctx.getImageData(sx, sy, sw, sh).data;
+  let r = 0, g = 0, b = 0, n = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    r += data[i];
+    g += data[i+1];
+    b += data[i+2];
+    n++;
+  }
+
+  const avgR = r / n;
+  const avgG = g / n;
+  const avgB = b / n;
+
+  // Brightness (luminance-weighted)
+  const luma = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
+  // Darkness score 0–100 (0=white, 100=black)
+  const darknessScore = 100 - (luma / 255 * 100);
+  // Warmth (reddish-brown vs blue-ish)
+  const warmth = (avgR - avgB) / 255;
+
+  // Determine verdict
+  const t = selectedProduct.thresholds;
+  let verdict;
+  if (darknessScore < t.underbaked.max) {
+    verdict = 'underbaked';
+  } else if (darknessScore >= t.proper.min && darknessScore <= t.proper.max) {
+    verdict = 'proper';
+  } else if (darknessScore > t.overbaked.min) {
+    verdict = 'overbaked';
+  } else {
+    // Edge cases — classify by proximity
+    const dUnder = Math.abs(darknessScore - t.underbaked.max);
+    const dProper = Math.min(Math.abs(darknessScore - t.proper.min), Math.abs(darknessScore - t.proper.max));
+    const dOver = Math.abs(darknessScore - t.overbaked.min);
+    const min = Math.min(dUnder, dProper, dOver);
+    if (min === dUnder) verdict = 'underbaked';
+    else if (min === dProper) verdict = 'proper';
+    else verdict = 'overbaked';
+  }
+
+  lastResult = { verdict, avgR, avgG, avgB, darknessScore, warmth };
+  showResult(lastResult);
+}
+
+// ── RESULT DISPLAY ───────────────────────────────────────────────────
+const VERDICTS = {
+  underbaked: { icon: '💧', label: 'Underbaked', cls: 'underbaked' },
+  proper:     { icon: '✅', label: 'Proper Baked', cls: 'proper' },
+  overbaked:  { icon: '🔥', label: 'Overbaked', cls: 'overbaked' }
+};
+
+function showResult(res) {
+  const v = VERDICTS[res.verdict];
+  const p = selectedProduct;
+
+  // Verdict block
+  const vb = document.getElementById('verdictBlock');
+  vb.className = 'verdict-block ' + v.cls;
+  document.getElementById('verdictIcon').textContent = v.icon;
+  document.getElementById('verdictLabel').textContent = v.label;
+  document.getElementById('verdictProd').textContent = p.name;
+  document.getElementById('resultProduct').textContent = p.name;
+
+  // Colour bar cursor
+  // Map darkness score 0–100 to position 0–100%
+  // Left = pale (underbaked), Right = dark (overbaked)
+  const pct = Math.min(100, Math.max(0, res.darknessScore));
+  document.getElementById('colorCursor').style.left = pct + '%';
+
+  // Swatch
+  const hex = `#${toHex(res.avgR)}${toHex(res.avgG)}${toHex(res.avgB)}`;
+  document.getElementById('swatchBox').style.background = hex;
+  document.getElementById('swatchValues').innerHTML =
+    `Average crust colour: ${hex.toUpperCase()}<br>` +
+    `Brightness: ${(100 - res.darknessScore).toFixed(0)}%  ·  ` +
+    `Darkness: ${res.darknessScore.toFixed(0)}%`;
+
+  // Advice
+  const advice = p.advice[res.verdict];
+  const list = document.getElementById('adviceList');
+  list.innerHTML = '';
+  advice.forEach(a => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="bullet">›</span><span>${a}</span>`;
+    list.appendChild(li);
+  });
+
+  goTo('screenResult');
+}
+
+function toHex(val) {
+  return Math.round(val).toString(16).padStart(2, '0');
+}
+
+// ── TOAST ────────────────────────────────────────────────────────────
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ── START ────────────────────────────────────────────────────────────
+init();
+</script>
+
+<!-- PWA Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  const SW_SRC = `
+const CACHE = 'bakery-qc-v1';
+const FILES = ['/bakery-qc/'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES).catch(()=>{})));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(ks =>
+    Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
+  `;
+  const blob = new Blob([SW_SRC], { type: 'application/javascript' });
+  const url  = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url, { scope: '/' })
+    .catch(() => {});
+}
+</script>
+</body>
+</html>
