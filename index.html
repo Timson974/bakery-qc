@@ -489,6 +489,43 @@
       color:#000 !important; }
     .log-entry-prod, .log-entry-verdict, .log-entry-meta, .log-entry-score
       { color:#000 !important; }
+
+  /* ── CATEGORY NAVIGATION ───────────────────────────────── */
+  .cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    padding:16px; }
+  .cat-card { background:#1f1a14; border:1px solid #2a2318; border-radius:12px;
+    padding:16px 12px; display:flex; flex-direction:column; align-items:center;
+    gap:8px; cursor:pointer; transition:background .15s; }
+  .cat-card:active { background:#2a2318; }
+  .cat-card-icon { font-size:32px; }
+  .cat-card-name { font-size:13px; font-weight:600; color:#f0ead8; text-align:center; }
+  .cat-card-count { font-size:11px; color:#9a8e78; }
+
+  /* ── LOG TABS ──────────────────────────────────────────── */
+  .log-tabs { display:flex; border-bottom:1px solid #2a2318; flex-shrink:0; }
+  .log-tab { flex:1; padding:10px; font-size:12px; font-weight:600;
+    color:#6a5f4a; background:none; border:none; cursor:pointer;
+    border-bottom:2px solid transparent; }
+  .log-tab.active { color:#c8a96e; border-bottom-color:#c8a96e; }
+
+  /* ── LOG PLAN VIEW ─────────────────────────────────────── */
+  .log-plan-group { margin-bottom:16px; }
+  .log-plan-group-title { font-size:11px; font-weight:700; color:#9a8e78;
+    text-transform:uppercase; letter-spacing:.06em; padding:0 2px 6px; }
+  .log-plan-item { display:flex; align-items:center; gap:10px;
+    padding:10px 12px; background:#1a1612; border-radius:8px;
+    margin-bottom:4px; border:1px solid #2a2318; }
+  .log-plan-item.checked { border-color:#2a4a2a; background:#111a11; }
+  .log-plan-item.unchecked { opacity:.85; }
+  .log-plan-status { font-size:18px; width:22px; text-align:center; flex-shrink:0; }
+  .log-plan-name { font-size:13px; color:#f0ead8; }
+  .log-plan-verdict { font-size:11px; }
+  .log-plan-verdict.proper    { color:#81c784; }
+  .log-plan-verdict.underbaked{ color:#90caf9; }
+  .log-plan-verdict.overbaked { color:#ef9a9a; }
+  .log-plan-date { font-size:10px; color:#5a5040; }
+  .log-plan-btn { background:#2a2318; border:1px solid #3d3528; border-radius:6px;
+    color:#c8a96e; font-size:11px; padding:4px 8px; cursor:pointer; flex-shrink:0; }
   }
 </style>
 <script>
@@ -525,8 +562,20 @@
   <!-- SCREEN 1: Product Select -->
   <div id="screenSelect" class="screen active">
     <div class="section-title" id="lblSelectProduct">Select product</div>
-    <div class="product-grid" id="productGrid"></div>
+    <div class="cat-grid" id="catGrid"></div>
     <button class="btn-primary" id="btnNext" disabled data-i18n="analyse_btn">Analyse →</button>
+  </div>
+
+  <!-- Category product screen -->
+  <div id="screenCat" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" id="catBackBtn">&#8249;</button>
+      <div>
+        <div class="screen-title" id="catScreenTitle">Select Product</div>
+        <div class="screen-sub" id="catScreenSub"></div>
+      </div>
+    </div>
+    <div id="catProductGrid" class="product-grid" style="padding:16px;gap:10px;"></div>
   </div>
 
   <!-- SCREEN 2: Photo -->
@@ -798,8 +847,7 @@ function setLang(lang) {
   });
   applyLang();
   // Re-render product grid with new language
-  document.getElementById('productGrid').innerHTML = '';
-  renderProducts();
+  renderCatGrid();
   // Re-render result screen if it's currently visible
   if (lastResult && document.getElementById('screenResult').classList.contains('active')) {
     showResult(lastResult);
@@ -1255,7 +1303,7 @@ function renderProducts() {
 }
 
 function init() {
-  renderProducts();
+  renderCatGrid();
   document.getElementById('fileGallery').addEventListener('change', onFileSelected);
   document.getElementById('fileCamera').addEventListener('change', onFileSelected);
   document.getElementById('btnNext').addEventListener('click', goToCamera);
@@ -1659,17 +1707,192 @@ function exportPDF() {
   setTimeout(() => window.print(), 100);
 }
 
+
+// ── PRODUCTION PLAN (from PDF 17 Nov 2026) ──────────────────────────────────
+const PRODUCTION_PLAN = [
+  { cat:'🌿 Sourdough', products:[
+    { code:'SOUR800',    name:'Classic Sourdough Bloomer 800g',    units:75,  appId:'classic_sourdough' },
+    { code:'SOUR400',    name:'Classic Sourdough Bloomer 400g',    units:8,   appId:'classic_sourdough' },
+    { code:'WMSOUR800',  name:'Wholemeal Sourdough 800g',          units:23,  appId:'wholemeal_sourdough' },
+    { code:'WMSOUR400',  name:'Wholemeal Sourdough 400g',          units:6,   appId:'wholemeal_sourdough' },
+    { code:'ANC800',     name:'Ancient Loaf 800g',                 units:86,  appId:'ancient800' },
+    { code:'ANC400',     name:'Ancient Loaf 400g',                 units:21,  appId:'ancient400' },
+    { code:'ANCB800',    name:'Ancient Bloomer 800g',              units:37,  appId:'ancient_bloomer' },
+    { code:'ANC170',     name:'Ancient Cob 170g',                  units:65,  appId:'ancient800' },
+    { code:'RUS800',     name:'Rustic Cob 800g',                   units:15,  appId:'rustic_sourdough' },
+    { code:'RUS400',     name:'Rustic Cob 400g',                   units:15,  appId:'rustic_sourdough' },
+    { code:'COSOUR1KG',  name:'Country Sourdough Round 1kg',       units:1,   appId:'country_sourdough' },
+    { code:'SOURTINC800',name:'Classic Sourdough Tin 800g',        units:15,  appId:'classic_sourdough' },
+  ]},
+  { cat:'🫒 Focaccia & Ciabatta', products:[
+    { code:'FOCR1250',   name:'Rosemary Focaccia Half Slab 1250g', units:7,   appId:'focaccia' },
+    { code:'FOCR800',    name:'Rosemary Focaccia Long 800g',       units:21,  appId:'focaccia' },
+    { code:'FOCR400',    name:'Rosemary Focaccia Round 400g',      units:5,   appId:'focaccia' },
+    { code:'CIA800',     name:'Ciabatta 800g',                     units:3,   appId:null },
+    { code:'CIA300',     name:'Ciabatta 300g',                     units:5,   appId:null },
+  ]},
+  { cat:'🍞 White & Speciality', products:[
+    { code:'WTIN800',    name:'White Sandwich Tin 800g',           units:28,  appId:null },
+    { code:'WTIN1600',   name:'White Sandwich Tin 1600g',          units:19,  appId:null },
+    { code:'WB800',      name:'White Bloomer 800g',                units:13,  appId:null },
+    { code:'TGRBRD',     name:'Tiger Bread Sub 120g',              units:230, appId:'tiger_bread' },
+    { code:'SHOKTIN1200',name:'Shokupan Tin 1200g',                units:4,   appId:null },
+  ]},
+  { cat:'🌾 Wholemeal & Seeded', products:[
+    { code:'WMTIN800',   name:'Wholemeal Sandwich Tin 800g',       units:17,  appId:null },
+    { code:'WMBAG300',   name:'Wholemeal Baguette 300g',           units:60,  appId:null },
+    { code:'AMS800',     name:'Multiseed Bloomer 800g',            units:24,  appId:null },
+    { code:'MW800',      name:'Malted Wheat Bloomer 800g',         units:6,   appId:null },
+  ]},
+  { cat:'🥐 Brioche', products:[
+    { code:'BRIBUN70',   name:'Brioche Bun Medium 70g',            units:280, appId:null },
+    { code:'BRIBUN90',   name:'Brioche Bun Large 90g',             units:120, appId:null },
+    { code:'BRIOMS70',   name:'Mixed Seed Onion Brioche 70g',      units:380, appId:null },
+    { code:'BRITIN800',  name:'Brioche Sandwich Tin 800g',         units:2,   appId:null },
+    { code:'BRITIN1600', name:'Brioche Sandwich Tin 1600g',        units:4,   appId:null },
+    { code:'BRIHD70',    name:'Brioche Hot Dog 70g',               units:40,  appId:null },
+  ]},
+  { cat:'🥯 Rolls & Buns', products:[
+    { code:'WROLL30',    name:'White Dinner Roll',                 units:120, appId:null },
+    { code:'WMROLL30',   name:'Wholemeal Dinner Roll',             units:75,  appId:null },
+    { code:'ROSROLL30',  name:'Rosemary Dinner Roll',              units:60,  appId:null },
+    { code:'OLIVROLL30', name:'Olive Dinner Roll',                 units:105, appId:null },
+    { code:'TEM60',      name:'English Muffin Standard',           units:30,  appId:null },
+  ]},
+  { cat:'🥖 Baguette', products:[
+    { code:'BAG300',     name:'Baguette 300g',                     units:20,  appId:null },
+    { code:'BAG150',     name:'Demi Baguette 150g',                units:4,   appId:null },
+    { code:'BAG100',     name:'Baguette 100g',                     units:20,  appId:null },
+  ]},
+];
+
+// ── RENDER CATEGORY GRID ─────────────────────────────────────────────────────
+function renderCatGrid() {
+  const grid = document.getElementById('catGrid');
+  if (!grid) return;
+  const allIds = PRODUCTS.map(p => p.id);
+  const cats = [
+    { id:'all',       icon:'📋', name:'All Products',
+      ids: allIds },
+    { id:'sourdough', icon:'🌿', name:'Sourdough',
+      ids: allIds.filter(id => ['classic_sourdough','rustic_sourdough','country_sourdough','ancient800','ancient400','ancient_bloomer','wholemeal_sourdough'].includes(id)) },
+    { id:'focaccia',  icon:'🫒', name:'Focaccia & Ciabatta',
+      ids: allIds.filter(id => id.includes('focaccia')) },
+    { id:'white',     icon:'🍞', name:'White & Speciality',
+      ids: allIds.filter(id => id.includes('tiger')) },
+  ].filter(c => c.ids.length > 0);
+
+  grid.innerHTML = cats.map(c => `
+    <div class="cat-card" data-catid="${c.id}">
+      <div class="cat-card-icon">${c.icon}</div>
+      <div class="cat-card-name">${c.name}</div>
+      <div class="cat-card-count">${c.ids.length} product${c.ids.length!==1?'s':''}</div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const catId = card.dataset.catid;
+      const cat = cats.find(c => c.id === catId);
+      if (!cat) return;
+      openCategory(cat);
+    });
+  });
+}
+
+function openCategory(cat) {
+  document.getElementById('catScreenTitle').textContent = cat.name;
+  document.getElementById('catScreenSub').textContent = cat.icon + ' — ' + cat.ids.length + ' product' + (cat.ids.length !== 1 ? 's' : '');
+  const grid = document.getElementById('catProductGrid');
+  grid.innerHTML = '';
+  PRODUCTS.filter(p => cat.ids.includes(p.id)).forEach(p => {
+    const pd = getProductData(p.id);
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.id = p.id;
+    card.innerHTML = '<div class="product-icon">' + p.icon + '</div>' +
+      '<div class="product-name">' + pd.name + '</div>' +
+      '<div class="product-desc">' + pd.desc + '</div>';
+    card.addEventListener('click', () => {
+      selectedProduct = p;
+      goTo('screenPhoto');
+    });
+    grid.appendChild(card);
+  });
+  goTo('screenCat');
+}
+
+// ── LOG TABS ─────────────────────────────────────────────────────────────────
+let logActiveTab = 'history';
+
+function switchLogTab(tab) {
+  logActiveTab = tab;
+  document.getElementById('logTabHistory').classList.toggle('active', tab === 'history');
+  document.getElementById('logTabPlan').classList.toggle('active', tab === 'plan');
+  if (tab === 'history') renderLog();
+  else renderPlan();
+}
+
+function renderPlan() {
+  const container = document.getElementById('logEntries');
+  if (!container) return;
+  const yesterday = Date.now() - 24 * 60 * 60 * 1000;
+  // Build map of most-recent check per appId (last 24h)
+  const recentByCode = {};
+  qcLog.forEach(e => {
+    if (e.ts && new Date(e.ts).getTime() > yesterday) {
+      if (!recentByCode[e.productId]) recentByCode[e.productId] = e;
+    }
+  });
+
+  let html = '';
+  PRODUCTION_PLAN.forEach(group => {
+    html += '<div class="log-plan-group"><div class="log-plan-group-title">' + group.cat + '</div>';
+    group.products.forEach(item => {
+      const checked = item.appId ? recentByCode[item.appId] : null;
+      const hasQC = !!item.appId;
+      const statusIcon = checked ? '✅' : (hasQC ? '⏳' : '—');
+      const cls = checked ? 'checked' : 'unchecked';
+      let verdictHtml = '';
+      if (checked) {
+        const vlabel = checked.verdict === 'proper' ? 'Proper Baked' : checked.verdict === 'underbaked' ? 'Underbaked' : 'Overbaked';
+        verdictHtml = '<div class="log-plan-verdict ' + checked.verdict + '">' + vlabel + ' · ' + checked.score.toFixed(0) + '</div>' +
+          '<div class="log-plan-date">' + formatDate(checked.ts) + '</div>';
+      } else if (hasQC) {
+        verdictHtml = '<div class="log-plan-date">Not checked today</div>';
+      } else {
+        verdictHtml = '<div class="log-plan-date">No camera QC</div>';
+      }
+      const checkBtn = (hasQC && !checked)
+        ? '<button class="log-plan-btn" onclick="quickCheck(\'' + item.appId + '\')">Check →</button>'
+        : '';
+      html += '<div class="log-plan-item ' + cls + '">' +
+        '<div class="log-plan-status">' + statusIcon + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div class="log-plan-name">' + item.name + '</div>' +
+          '<div style="font-size:10px;color:#5a5040">' + item.code + ' &nbsp;·  ' + item.units + ' units</div>' +
+          verdictHtml +
+        '</div>' +
+        checkBtn +
+        '</div>';
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function quickCheck(productId) {
+  const p = PRODUCTS.find(pr => pr.id === productId);
+  if (!p) return;
+  selectedProduct = p;
+  closeLog();
+  goTo('screenPhoto');
+}
+
 // Init log count on load
 updateLogCount();
 
-// Wire log panel buttons via addEventListener (more reliable than onclick in fixed panels)
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('logBtn').addEventListener('click', openLog);
-  document.getElementById('logBackBtn').addEventListener('click', closeLog);
-  document.getElementById('logExportBtn').addEventListener('click', exportPDF);
-  document.getElementById('logClearBtn').addEventListener('click', clearLog);
-  document.getElementById('logPrintBtn').addEventListener('click', exportPDF);
-});
+// Button wiring moved to inline script after log panel HTML (end of body)
 
 applyLang();
 </script>
@@ -1749,6 +1972,10 @@ window.addEventListener('appinstalled', () => {
     <button class="back-btn" id="logBackBtn">‹</button>
     <h2 id="logPanelTitle">📋 QC Log</h2>
   </div>
+  <div class="log-tabs">
+    <button class="log-tab active" id="logTabHistory">&#128203; History</button>
+    <button class="log-tab" id="logTabPlan">&#128230; Today's Plan</button>
+  </div>
   <div class="log-actions">
     <button class="log-action-btn primary" id="logExportBtn">⬇ Export PDF</button>
     <button class="log-action-btn danger"  id="logClearBtn">🗑 Clear all</button>
@@ -1756,6 +1983,21 @@ window.addEventListener('appinstalled', () => {
   <div class="log-entries" id="logEntries"></div>
   <button class="save-log-btn" id="logPrintBtn">⬇️ Save as PDF / Print</button>
 </div>
+
+<script>
+// Wire buttons — this runs AFTER all elements above exist in DOM
+(function() {
+  function wire(id, fn) { var el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
+  wire('logBtn',         openLog);
+  wire('logBackBtn',     closeLog);
+  wire('logExportBtn',   exportPDF);
+  wire('logClearBtn',    clearLog);
+  wire('logPrintBtn',    exportPDF);
+  wire('logTabHistory',  function(){ switchLogTab('history'); });
+  wire('logTabPlan',     function(){ switchLogTab('plan'); });
+  wire('catBackBtn',     function(){ goTo('screenSelect'); });
+})();
+</script>
 
 </body>
 </html>
