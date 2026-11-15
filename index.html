@@ -23,6 +23,59 @@
   .shade-swatch-label { font-size:10px; color:rgba(255,255,255,.7); line-height:1.2; }
   .shade-swatch-val { font-size:14px; font-weight:700; color:#fff;
     text-shadow:0 1px 3px rgba(0,0,0,.7); }
+  /* shade card header row */
+  .shade-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .shade-card-title { font-size:12px; color:#9a8e78; text-transform:uppercase; letter-spacing:.05em; }
+  .btn-shade-info { background:none; border:1px solid #c8832a; color:#c8832a; border-radius:6px;
+    font-size:11px; padding:3px 9px; cursor:pointer; }
+  /* multi-zone sample boxes */
+  .zone-box { position:absolute; border:2px solid rgba(255,140,0,.85); border-radius:4px;
+    box-sizing:border-box; pointer-events:none; }
+  .zone-box .zone-num { position:absolute; top:2px; left:4px; font-size:10px; font-weight:700;
+    color:#ffa500; text-shadow:0 0 4px #000; }
+  /* shade modal overlay */
+  .shade-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:200;
+    display:flex; align-items:flex-end; justify-content:center; }
+  .shade-modal-backdrop.hidden { display:none; }
+  .shade-modal { background:#1e1a14; border-radius:16px 16px 0 0; padding:20px 16px 32px;
+    width:100%; max-width:480px; max-height:88vh; overflow-y:auto; }
+  .shade-modal-title { font-size:16px; font-weight:700; color:#e8d5a0; margin-bottom:4px; }
+  .shade-modal-sub { font-size:12px; color:#9a8e78; margin-bottom:16px; }
+  .shade-modal-close { float:right; background:none; border:none; color:#9a8e78; font-size:22px;
+    cursor:pointer; margin-top:-4px; }
+  .shade-scale-bar { position:relative; height:36px; border-radius:8px; margin:12px 0 6px;
+    background:linear-gradient(to right,
+      rgb(190,155,138) 0%, rgb(170,130,115) 20%, rgb(150,110,95) 40%,
+      rgb(130,92,82) 55%, rgb(110,78,72) 70%, rgb(90,60,58) 85%, rgb(70,45,45) 100%); }
+  .shade-scale-tick { position:absolute; top:0; bottom:0; width:2px; background:rgba(255,255,255,.35); }
+  .shade-scale-labels { display:flex; justify-content:space-between; font-size:10px; color:#9a8e78; margin-bottom:12px; }
+  .shade-zone-row { display:flex; gap:8px; margin-bottom:14px; }
+  .shade-zone-card { flex:1; border-radius:10px; padding:10px 8px 8px; border:1px solid rgba(255,255,255,.1);
+    text-align:center; }
+  .shade-zone-name { font-size:11px; font-weight:700; margin-bottom:2px; }
+  .shade-zone-score { font-size:22px; font-weight:800; }
+  .shade-zone-desc { font-size:10px; color:rgba(255,255,255,.65); margin-top:4px; line-height:1.3; }
+  .shade-zone-card.z-under { background:#1a2535; }
+  .shade-zone-card.z-proper { background:#1a2d1a; }
+  .shade-zone-card.z-over { background:#2d1a1a; }
+  .shade-zone-name.z-under { color:#8ecfff; }
+  .shade-zone-name.z-proper { color:#6bcb6b; }
+  .shade-zone-name.z-over { color:#ff7a4a; }
+  .shade-zone-score.z-under { color:#8ecfff; }
+  .shade-zone-score.z-proper { color:#6bcb6b; }
+  .shade-zone-score.z-over { color:#ff7a4a; }
+  .shade-prod-swatches { display:flex; gap:6px; margin-bottom:6px; }
+  .shade-prod-swatch { flex:1; height:52px; border-radius:7px; display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end; padding-bottom:6px;
+    border:1px solid rgba(255,255,255,.12); }
+  .shade-prod-swatch span { font-size:10px; color:rgba(255,255,255,.75); }
+  .shade-prod-swatch strong { font-size:13px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.8); }
+  .shade-modal-section-title { font-size:12px; color:#9a8e78; text-transform:uppercase;
+    letter-spacing:.05em; margin:14px 0 8px; }
+  /* multi-zone result detail */
+  .zone-readings { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .zone-reading-chip { background:#2a2318; border:1px solid #3d3528; border-radius:6px;
+    padding:5px 10px; font-size:12px; color:#c8832a; }
 </style>
 <link rel="apple-touch-icon" href="data:image/png;base64,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">
 <style>
@@ -445,7 +498,10 @@
 
     <!-- Shade card reference for selected product -->
     <div class="shade-card-section" id="shadeCardSection" style="display:none">
-      <div class="shade-card-title" id="lblShadeRef">Acrylamide shade reference</div>
+      <div class="shade-card-header">
+        <div class="shade-card-title" id="lblShadeRef">Acrylamide shade reference</div>
+        <button class="btn-shade-info" onclick="openShadeModal()" id="lblShadeInfoBtn">What is this? ›</button>
+      </div>
       <div class="shade-swatches" id="shadeSwatches"></div>
     </div>
 
@@ -504,6 +560,59 @@
 
 <div id="toast"></div>
 
+<!-- Shade card info modal -->
+<div class="shade-modal-backdrop hidden" id="shadeModalBackdrop" onclick="closeShadeModal(event)">
+  <div class="shade-modal" id="shadeModalInner">
+    <button class="shade-modal-close" onclick="document.getElementById('shadeModalBackdrop').classList.add('hidden')">×</button>
+    <div class="shade-modal-title" id="smTitle">Acrylamide Shade Reference</div>
+    <div class="shade-modal-sub" id="smSub">Colour scale — darkness score 0–100</div>
+
+    <!-- Full gradient scale bar -->
+    <div class="shade-scale-bar" id="smScaleBar">
+      <div class="shade-scale-tick" style="left:30%"></div>
+      <div class="shade-scale-tick" style="left:50%"></div>
+      <div class="shade-scale-tick" style="left:70%"></div>
+    </div>
+    <div class="shade-scale-labels">
+      <span>0 — white</span><span>30</span><span>50</span><span>70</span><span>100 — black</span>
+    </div>
+
+    <!-- Three verdict zones explanation -->
+    <div class="shade-zone-row">
+      <div class="shade-zone-card z-under">
+        <div class="shade-zone-name z-under" id="smZoneUnderName">💧 Underbaked</div>
+        <div class="shade-zone-score z-under" id="smZoneUnderScore">&lt;50</div>
+        <div class="shade-zone-desc" id="smZoneUnderDesc">Too pale — acrylamide low but bread may be doughy inside</div>
+      </div>
+      <div class="shade-zone-card z-proper">
+        <div class="shade-zone-name z-proper" id="smZoneProperName">✅ Proper</div>
+        <div class="shade-zone-score z-proper" id="smZoneProperScore">50–62</div>
+        <div class="shade-zone-desc" id="smZoneProperDesc">Target — good Maillard colour, acceptable acrylamide level</div>
+      </div>
+      <div class="shade-zone-card z-over">
+        <div class="shade-zone-name z-over" id="smZoneOverName">🔥 Overbaked</div>
+        <div class="shade-zone-score z-over" id="smZoneOverScore">&gt;62</div>
+        <div class="shade-zone-desc" id="smZoneOverDesc">Too dark — elevated acrylamide, bitter taste, reduced quality</div>
+      </div>
+    </div>
+
+    <!-- Product-specific shade card swatches -->
+    <div id="smProductSection" style="display:none">
+      <div class="shade-modal-section-title" id="smProductTitle">Flourish shade card — this product</div>
+      <div class="shade-prod-swatches" id="smProductSwatches"></div>
+    </div>
+
+    <!-- What is acrylamide -->
+    <div class="shade-modal-section-title" id="smWhatTitle">What is acrylamide?</div>
+    <div style="font-size:12px; color:#9a8e78; line-height:1.6;" id="smWhatText">
+      Acrylamide forms in starchy foods when baked above ~120°C (Maillard reaction).
+      EU Regulation 2017/2158 requires bakeries to monitor crust colour as a mitigation measure.
+      Darker crust = higher acrylamide. The Flourish shade cards (scales 1–4) are the official
+      colour reference for this product range.
+    </div>
+  </div>
+</div>
+
 <script>
 // ── i18n ─────────────────────────────────────────────────────────────
 let LANG = 'en';
@@ -517,6 +626,12 @@ const I18N = {
     tapHint: 'Tap to take photo\nor upload from gallery',
     zoneInfo: 'The orange frame samples the lower crust — away from flour-dusted top. Frame the loaf so its sides are visible in the lower half of the photo.',
     shadeRef: 'Acrylamide shade reference',
+    shadeInfoBtn: 'What is this? ›',
+    smTitle: 'Acrylamide Shade Reference',
+    smSub: 'Darkness score 0 = white, 100 = black',
+    smWhatTitle: 'What is acrylamide?',
+    smWhatText: 'Acrylamide forms in starchy foods baked above ~120°C (Maillard reaction). EU Regulation 2017/2158 requires bakeries to monitor crust colour as a mitigation measure. Darker crust = higher acrylamide. The Flourish shade cards (scales 1–4) are the official colour reference for this product range.',
+    shadeCardFor: 'Flourish shade card — ',
     analysisResult: 'Analysis result',
     colourReading: 'Colour reading',
     underLbl: 'Underbaked', properLbl: 'Proper', overLbl: 'Overbaked',
@@ -537,6 +652,12 @@ const I18N = {
     tapHint: 'Нажмите для фото\nили выберите из галереи',
     zoneInfo: 'Оранжевая рамка замеряет нижнюю корочку — в стороне от посыпки мукой сверху. Держите буханку так, чтобы боковые стороны были видны в нижней половине фото.',
     shadeRef: 'Шкала акриламида (эталон)',
+    shadeInfoBtn: 'Что это? ›',
+    smTitle: 'Шкала акриламида — эталон',
+    smSub: 'Индекс темноты: 0 = белый, 100 = чёрный',
+    smWhatTitle: 'Что такое акриламид?',
+    smWhatText: 'Акриламид образуется в крахмалистых продуктах при выпечке выше ~120°C (реакция Майяра). Регламент ЕС 2017/2158 обязывает пекарни контролировать цвет корочки. Темнее корочка = больше акриламида. Карточки Flourish (шкала 1–4) — официальный эталон цвета для данной линейки.',
+    shadeCardFor: 'Карточка Flourish — ',
     analysisResult: 'Результат анализа',
     colourReading: 'Цвет корочки',
     underLbl: 'Недопечено', properLbl: 'Норма', overLbl: 'Перепечено',
@@ -557,6 +678,12 @@ const I18N = {
     tapHint: 'Фото түсіру үшін басыңыз\nнемесе галереяdан таңдаңыз',
     zoneInfo: 'Қызғылт сары шеңбер төменгі қыртысты өлшейді — үстіндегі ұннан алыс. Нанды оның бүйірлері фотоның төменгі жартысында көрінетіндей ұстаңыз.',
     shadeRef: 'Акриламид реңк эталоны',
+    shadeInfoBtn: 'Бұл не? ›',
+    smTitle: 'Акриламид реңк шкаласы',
+    smSub: 'Қараңғылық индексі: 0 = ақ, 100 = қара',
+    smWhatTitle: 'Акриламид дегеніміз не?',
+    smWhatText: 'Акриламид крахмалды өнімдерде ~120°C жоғары пісіргенде түзіледі (Майяр реакциясы). ЕО 2017/2158 регламенті наубайхана мекемелерін қыртыс түсін бақылауға міндеттейді. Қыртыс неғұрлым қараңғы болса, акриламид соғұрлым көп. Flourish карталары (1–4 шкала) осы өнімдер үшін ресми түс эталоны болып табылады.',
+    shadeCardFor: 'Flourish картасы — ',
     analysisResult: 'Талдау нәтижесі',
     colourReading: 'Қыртыс түсі',
     underLbl: 'Аз пісірілген', properLbl: 'Норма', overLbl: 'Артық пісірілген',
@@ -577,6 +704,12 @@ const I18N = {
     tapHint: 'Dotknij, aby zrobić zdjęcie\nlub wybrać z galerii',
     zoneInfo: 'Pomarańczowa ramka próbkuje dolną skórkę — z dala od mąki na górze. Ustaw bochenek tak, aby jego boki były widoczne w dolnej połowie zdjęcia.',
     shadeRef: 'Wzornik odcieni akryloamidu',
+    shadeInfoBtn: 'Co to jest? ›',
+    smTitle: 'Wzornik odcieni akryloamidu',
+    smSub: 'Skala ciemności: 0 = biały, 100 = czarny',
+    smWhatTitle: 'Czym jest akryloamid?',
+    smWhatText: 'Akryloamid tworzy się w produktach skrobiowych pieczonych powyżej ~120°C (reakcja Maillarda). Rozporządzenie UE 2017/2158 zobowiązuje piekarnie do monitorowania koloru skórki. Ciemniejsza skórka = więcej akryloamidu. Karty Flourish (skala 1–4) są oficjalnym wzornikiem kolorów dla tej linii produktów.',
+    shadeCardFor: 'Karta Flourish — ',
     analysisResult: 'Wynik analizy',
     colourReading: 'Odczyt koloru',
     underLbl: 'Niedopieczony', properLbl: 'Prawidłowy', overLbl: 'Przepieczony',
@@ -620,6 +753,7 @@ function applyLang() {
   set('lblTapHint', L.tapHint);
   set('lblZoneInfo', L.zoneInfo);
   set('lblShadeRef', L.shadeRef);
+  set('lblShadeInfoBtn', L.shadeInfoBtn || 'What is this? ›');
   set('lblAnalysisResult', L.analysisResult);
   set('lblColourReading', L.colourReading);
   set('lblUnder', L.underLbl);
@@ -1027,10 +1161,13 @@ function goTo(id) {
 function newCheck() {
   // Reset photo state
   photoLoaded = false;
+  lastResult = null;
   document.getElementById('previewImg').style.display = 'none';
   document.getElementById('photoHint').style.display = 'flex';
   document.getElementById('sampleOverlay').classList.remove('visible');
   document.getElementById('btnAnalyze').classList.remove('visible');
+  // Remove multi-zone boxes
+  document.getElementById('photoZone').querySelectorAll('.zone-box').forEach(el => el.remove());
   document.getElementById('fileGallery').value = '';
   document.getElementById('fileCamera').value = '';
   goTo('screenSelect');
@@ -1057,88 +1194,97 @@ function onFileSelected(e) {
   reader.readAsDataURL(file);
 }
 
+// ── MULTI-ZONE SAMPLING ──────────────────────────────────────────────
+// Returns array of {x, y, w, h} in fractional (0–1) coords
+function getSampleZones() {
+  const usesTop = selectedProduct && selectedProduct.sampleZone === 'top';
+  if (usesTop) {
+    // Tiger bread: 3 zones across the top stripe
+    return [
+      { x:0.15, y:0.05, w:0.22, h:0.35 },
+      { x:0.39, y:0.05, w:0.22, h:0.35 },
+      { x:0.63, y:0.05, w:0.22, h:0.35 },
+    ];
+  }
+  // Default: 4 zones covering lower half — catches multiple loaves
+  return [
+    { x:0.08, y:0.45, w:0.20, h:0.42 },
+    { x:0.30, y:0.48, w:0.20, h:0.42 },
+    { x:0.52, y:0.48, w:0.20, h:0.42 },
+    { x:0.72, y:0.45, w:0.20, h:0.42 },
+  ];
+}
+
 function showSampleOverlay() {
   const zone = document.getElementById('photoZone');
-  const overlay = document.getElementById('sampleOverlay');
-  const w = zone.offsetWidth;
-  const h = zone.offsetHeight;
+  // Remove old single overlay boxes
+  zone.querySelectorAll('.zone-box').forEach(el => el.remove());
+  const ow = zone.offsetWidth;
+  const oh = zone.offsetHeight;
 
-  // Sample zone: lower-centre by default, top-centre for tiger bread
-  const usesTop = selectedProduct && selectedProduct.sampleZone === 'top';
-  const sw = w * 0.50;
-  const sh = usesTop ? h * 0.40 : h * 0.45;
-  const sx = (w - sw) / 2;
-  const sy = usesTop ? h * 0.05 : h * 0.45;
-
-  overlay.style.left = sx + 'px';
-  overlay.style.top  = sy + 'px';
-  overlay.style.width  = sw + 'px';
-  overlay.style.height = sh + 'px';
-  overlay.classList.add('visible');
+  getSampleZones().forEach((z, i) => {
+    const box = document.createElement('div');
+    box.className = 'zone-box';
+    box.style.left   = (z.x * ow) + 'px';
+    box.style.top    = (z.y * oh) + 'px';
+    box.style.width  = (z.w * ow) + 'px';
+    box.style.height = (z.h * oh) + 'px';
+    const num = document.createElement('div');
+    num.className = 'zone-num';
+    num.textContent = i + 1;
+    box.appendChild(num);
+    zone.appendChild(box);
+  });
 }
 
 // ── COLOUR ANALYSIS ──────────────────────────────────────────────────
+function sampleZonePixels(ctx, cw, ch, z) {
+  const sx = Math.floor(z.x * cw);
+  const sy = Math.floor(z.y * ch);
+  const sw = Math.floor(z.w * cw);
+  const sh = Math.floor(z.h * ch);
+  const data = ctx.getImageData(sx, sy, sw, sh).data;
+  let r = 0, g = 0, b = 0, n = 0;
+  for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i+1]; b += data[i+2]; n++; }
+  const avgR = r/n, avgG = g/n, avgB = b/n;
+  const luma = 0.299*avgR + 0.587*avgG + 0.114*avgB;
+  return { r: avgR, g: avgG, b: avgB, darkness: 100 - (luma/255*100) };
+}
+
+function classifyDarkness(darkness, t) {
+  if (darkness < t.underbaked.max) return 'underbaked';
+  if (darkness >= t.proper.min && darkness <= t.proper.max) return 'proper';
+  if (darkness > t.overbaked.min) return 'overbaked';
+  const dU = Math.abs(darkness - t.underbaked.max);
+  const dP = Math.min(Math.abs(darkness - t.proper.min), Math.abs(darkness - t.proper.max));
+  const dO = Math.abs(darkness - t.overbaked.min);
+  const m = Math.min(dU, dP, dO);
+  return m===dU ? 'underbaked' : m===dP ? 'proper' : 'overbaked';
+}
+
 function runAnalysis() {
   if (!photoLoaded || !selectedProduct) return;
 
   const img = document.getElementById('previewImg');
   const canvas = document.getElementById('analysisCanvas');
   const ctx = canvas.getContext('2d');
-
-  // Draw full image to canvas
   canvas.width  = img.naturalWidth;
   canvas.height = img.naturalHeight;
   ctx.drawImage(img, 0, 0);
 
-  // Sample zone: top-centre for tiger bread, lower-centre for all others
-  const usesTopZone = selectedProduct && selectedProduct.sampleZone === 'top';
-  const sx = Math.floor(canvas.width  * 0.25);
-  const sy = usesTopZone ? Math.floor(canvas.height * 0.05) : Math.floor(canvas.height * 0.45);
-  const sw = Math.floor(canvas.width  * 0.50);
-  const sh = usesTopZone ? Math.floor(canvas.height * 0.40) : Math.floor(canvas.height * 0.45);
+  const zones = getSampleZones();
+  const zoneResults = zones.map(z => sampleZonePixels(ctx, canvas.width, canvas.height, z));
 
-  const data = ctx.getImageData(sx, sy, sw, sh).data;
-  let r = 0, g = 0, b = 0, n = 0;
-
-  for (let i = 0; i < data.length; i += 4) {
-    r += data[i];
-    g += data[i+1];
-    b += data[i+2];
-    n++;
-  }
-
-  const avgR = r / n;
-  const avgG = g / n;
-  const avgB = b / n;
-
-  // Brightness (luminance-weighted)
-  const luma = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
-  // Darkness score 0–100 (0=white, 100=black)
-  const darknessScore = 100 - (luma / 255 * 100);
-  // Warmth (reddish-brown vs blue-ish)
+  // Average across all zones
+  const avgR = zoneResults.reduce((s,z)=>s+z.r,0)/zoneResults.length;
+  const avgG = zoneResults.reduce((s,z)=>s+z.g,0)/zoneResults.length;
+  const avgB = zoneResults.reduce((s,z)=>s+z.b,0)/zoneResults.length;
+  const darknessScore = zoneResults.reduce((s,z)=>s+z.darkness,0)/zoneResults.length;
   const warmth = (avgR - avgB) / 255;
 
-  // Determine verdict
-  const t = selectedProduct.thresholds;
-  let verdict;
-  if (darknessScore < t.underbaked.max) {
-    verdict = 'underbaked';
-  } else if (darknessScore >= t.proper.min && darknessScore <= t.proper.max) {
-    verdict = 'proper';
-  } else if (darknessScore > t.overbaked.min) {
-    verdict = 'overbaked';
-  } else {
-    // Edge cases — classify by proximity
-    const dUnder = Math.abs(darknessScore - t.underbaked.max);
-    const dProper = Math.min(Math.abs(darknessScore - t.proper.min), Math.abs(darknessScore - t.proper.max));
-    const dOver = Math.abs(darknessScore - t.overbaked.min);
-    const min = Math.min(dUnder, dProper, dOver);
-    if (min === dUnder) verdict = 'underbaked';
-    else if (min === dProper) verdict = 'proper';
-    else verdict = 'overbaked';
-  }
+  const verdict = classifyDarkness(darknessScore, selectedProduct.thresholds);
 
-  lastResult = { verdict, avgR, avgG, avgB, darknessScore, warmth };
+  lastResult = { verdict, avgR, avgG, avgB, darknessScore, warmth, zoneResults };
   showResult(lastResult);
 }
 
@@ -1168,10 +1314,19 @@ function showResult(res) {
   // Swatch
   const hex = `#${toHex(res.avgR)}${toHex(res.avgG)}${toHex(res.avgB)}`;
   document.getElementById('swatchBox').style.background = hex;
+  const L = I18N[LANG] || I18N.en;
+  let zoneHtml = '';
+  if (res.zoneResults && res.zoneResults.length > 1) {
+    zoneHtml = `<div class="zone-readings">` +
+      res.zoneResults.map((z, i) => {
+        const vc = classifyDarkness(z.darkness, selectedProduct.thresholds);
+        const ic = vc==='underbaked'?'💧':vc==='proper'?'✅':'🔥';
+        return `<div class="zone-reading-chip">${i+1}: ${z.darkness.toFixed(0)} ${ic}</div>`;
+      }).join('') + `</div>`;
+  }
   document.getElementById('swatchValues').innerHTML =
-    `Average crust colour: ${hex.toUpperCase()}<br>` +
-    `Brightness: ${(100 - res.darknessScore).toFixed(0)}%  ·  ` +
-    `Darkness: ${res.darknessScore.toFixed(0)}%`;
+    `Average: ${hex.toUpperCase()} · Darkness <strong>${res.darknessScore.toFixed(0)}</strong>/100` +
+    zoneHtml;
 
   // Advice (from localised product data)
   const advice = pd.advice[res.verdict] || [];
@@ -1188,6 +1343,75 @@ function showResult(res) {
 
 function toHex(val) {
   return Math.round(val).toString(16).padStart(2, '0');
+}
+
+// ── SHADE MODAL ──────────────────────────────────────────────────────
+function openShadeModal() {
+  const L = I18N[LANG] || I18N.en;
+  const p = selectedProduct;
+  const pd = p ? getProductData(p.id) : null;
+
+  // Update modal text with i18n
+  const smTitle = L.smTitle || 'Acrylamide Shade Reference';
+  const smSub   = L.smSub   || 'Colour scale — darkness score 0–100';
+  document.getElementById('smTitle').textContent = smTitle;
+  document.getElementById('smSub').textContent   = smSub;
+  document.getElementById('smWhatTitle').textContent = L.smWhatTitle || 'What is acrylamide?';
+  document.getElementById('smWhatText').textContent  = L.smWhatText  || document.getElementById('smWhatText').textContent;
+
+  // Update verdict zone scores from selected product thresholds
+  if (p) {
+    const t = p.thresholds;
+    document.getElementById('smZoneUnderScore').textContent  = `<${t.underbaked.max}`;
+    document.getElementById('smZoneProperScore').textContent = `${t.proper.min}–${t.proper.max}`;
+    document.getElementById('smZoneOverScore').textContent   = `>${t.overbaked.min}`;
+    document.getElementById('smZoneUnderName').textContent   = `💧 ${(L.verdicts||{underbaked:'Underbaked'}).underbaked}`;
+    document.getElementById('smZoneProperName').textContent  = `✅ ${(L.verdicts||{proper:'Proper Baked'}).proper}`;
+    document.getElementById('smZoneOverName').textContent    = `🔥 ${(L.verdicts||{overbaked:'Overbaked'}).overbaked}`;
+  }
+
+  // Show product shade card swatches in modal if available
+  const prodSec = document.getElementById('smProductSection');
+  const prodSwatches = document.getElementById('smProductSwatches');
+  if (p && p.shadeCard) {
+    const sl = (L.shadeLabels || {light:'Light (1)', target:'Target (3)', tooD:'Too Dark (4)'});
+    document.getElementById('smProductTitle').textContent = (L.shadeCardFor || 'Flourish shade card — ') + (pd ? pd.name : '');
+    prodSwatches.innerHTML = p.shadeCard.map(s => {
+      const lbl = sl[s.label] || s.label;
+      return `<div class="shade-prod-swatch" style="background:rgb(${s.r},${s.g},${s.b})">
+        <span>${lbl}</span><strong>${s.darkness.toFixed(0)}</strong>
+      </div>`;
+    }).join('');
+    prodSec.style.display = 'block';
+  } else {
+    prodSec.style.display = 'none';
+  }
+
+  // Add marker on scale bar if last result exists
+  const bar = document.getElementById('smScaleBar');
+  bar.querySelectorAll('.scale-result-marker').forEach(el => el.remove());
+  if (lastResult) {
+    const pct = Math.min(98, Math.max(2, lastResult.darknessScore));
+    const marker = document.createElement('div');
+    marker.className = 'scale-result-marker';
+    marker.style.cssText = `position:absolute;top:-8px;left:${pct}%;transform:translateX(-50%);
+      width:12px;height:52px;background:rgba(255,255,255,.9);border-radius:3px;
+      box-shadow:0 0 6px rgba(255,200,0,.8);`;
+    const lbl = document.createElement('div');
+    lbl.style.cssText = `position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+      font-size:10px;color:#ffd700;white-space:nowrap;font-weight:700;`;
+    lbl.textContent = lastResult.darknessScore.toFixed(0);
+    marker.appendChild(lbl);
+    bar.appendChild(marker);
+  }
+
+  document.getElementById('shadeModalBackdrop').classList.remove('hidden');
+}
+
+function closeShadeModal(e) {
+  if (e.target === document.getElementById('shadeModalBackdrop')) {
+    document.getElementById('shadeModalBackdrop').classList.add('hidden');
+  }
 }
 
 // ── TOAST ────────────────────────────────────────────────────────────
