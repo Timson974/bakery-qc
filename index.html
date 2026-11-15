@@ -1662,6 +1662,15 @@ function exportPDF() {
 // Init log count on load
 updateLogCount();
 
+// Wire log panel buttons via addEventListener (more reliable than onclick in fixed panels)
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('logBtn').addEventListener('click', openLog);
+  document.getElementById('logBackBtn').addEventListener('click', closeLog);
+  document.getElementById('logExportBtn').addEventListener('click', exportPDF);
+  document.getElementById('logClearBtn').addEventListener('click', clearLog);
+  document.getElementById('logPrintBtn').addEventListener('click', exportPDF);
+});
+
 applyLang();
 </script>
 
@@ -1672,9 +1681,9 @@ applyLang();
 </footer>
 
 <!-- Install Banner -->
-<div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+<div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:800;
   background:#231f1a;border-top:1px solid #3d3528;padding:14px 16px;
-  display:none;align-items:center;gap:12px;max-width:480px;margin:0 auto;">
+  align-items:center;gap:12px;max-width:480px;margin:0 auto;">
   <span style="font-size:28px">🔬</span>
   <div style="flex:1">
     <strong style="display:block;font-size:14px;color:#f0ead8">Add to Home Screen</strong>
@@ -1729,7 +1738,7 @@ window.addEventListener('appinstalled', () => {
 });
 </script>
 <!-- QC Log floating button -->
-<button class="log-btn" id="logBtn" onclick="openLog()">
+<button class="log-btn" id="logBtn">
   📋 <span id="logBtnLabel">QC Log</span>
   <span class="log-count" id="logCount">0</span>
 </button>
@@ -1737,15 +1746,15 @@ window.addEventListener('appinstalled', () => {
 <!-- QC Log panel -->
 <div class="log-panel" id="logPanel">
   <div class="log-panel-header">
-    <button class="back-btn" onclick="closeLog()">‹</button>
+    <button class="back-btn" id="logBackBtn">‹</button>
     <h2 id="logPanelTitle">📋 QC Log</h2>
   </div>
   <div class="log-actions">
-    <button class="log-action-btn primary" onclick="exportPDF()">⬇ Export PDF</button>
-    <button class="log-action-btn danger"  onclick="clearLog()">🗑 Clear all</button>
+    <button class="log-action-btn primary" id="logExportBtn">⬇ Export PDF</button>
+    <button class="log-action-btn danger"  id="logClearBtn">🗑 Clear all</button>
   </div>
   <div class="log-entries" id="logEntries"></div>
-  <button class="save-log-btn" onclick="exportPDF()">⬇️ Save as PDF / Print</button>
+  <button class="save-log-btn" id="logPrintBtn">⬇️ Save as PDF / Print</button>
 </div>
 
 </body>
