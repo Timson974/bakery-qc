@@ -428,6 +428,69 @@
 
   /* ── Hidden input ── */
   #fileInput { display: none; }
+
+  /* ── QC LOG ───────────────────────────────────────────── */
+  .log-btn { position:fixed; bottom:72px; right:16px; z-index:800;
+    background:#2a2318; border:1px solid #4a3f2f; border-radius:50px;
+    color:#c8a96e; font-size:13px; font-weight:600; padding:10px 16px;
+    cursor:pointer; box-shadow:0 2px 12px rgba(0,0,0,.5);
+    display:flex; align-items:center; gap:6px; }
+  .log-btn .log-count { background:#c8a96e; color:#1a1612; border-radius:50%;
+    width:18px; height:18px; font-size:11px; display:inline-flex;
+    align-items:center; justify-content:center; font-weight:700; }
+  .log-panel { position:fixed; inset:0; z-index:900; background:#1a1612;
+    display:flex; flex-direction:column; transform:translateY(100%);
+    transition:transform .3s ease; }
+  .log-panel.open { transform:translateY(0); }
+  .log-panel-header { display:flex; align-items:center; gap:12px;
+    padding:16px; border-bottom:1px solid #2a2318; background:#1f1a14;
+    flex-shrink:0; }
+  .log-panel-header h2 { flex:1; font-size:16px; color:#f0ead8; margin:0; }
+  .log-actions { display:flex; gap:8px; padding:12px 16px 8px;
+    border-bottom:1px solid #2a2318; flex-shrink:0; position:relative; z-index:2; }
+  .log-action-btn { flex:1; padding:9px 8px; border-radius:8px; font-size:12px;
+    font-weight:600; cursor:pointer; border:1px solid #3d3528;
+    position:relative; z-index:2; }
+  .log-action-btn.primary { background:#c8a96e; color:#1a1612; border-color:#c8a96e; }
+  .log-action-btn.danger  { background:transparent; color:#e05050; }
+  .log-entries { flex:1; min-height:0; overflow-y:auto; padding:12px 16px; display:flex;
+    flex-direction:column; gap:8px; }
+  .log-empty { text-align:center; color:#5a5040; padding:48px 24px;
+    font-size:14px; line-height:1.6; }
+  .log-entry { background:#231f1a; border-radius:10px; padding:12px 14px;
+    border-left:4px solid #3d3528; display:flex; gap:12px; align-items:flex-start; }
+  .log-entry.proper    { border-left-color:#4caf50; }
+  .log-entry.underbaked{ border-left-color:#64b5f6; }
+  .log-entry.overbaked { border-left-color:#ef5350; }
+  .log-entry-icon { font-size:22px; line-height:1; padding-top:2px; }
+  .log-entry-body { flex:1; min-width:0; }
+  .log-entry-prod { font-size:13px; font-weight:700; color:#f0ead8;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .log-entry-verdict { font-size:12px; margin:2px 0; }
+  .log-entry-verdict.proper    { color:#81c784; }
+  .log-entry-verdict.underbaked{ color:#90caf9; }
+  .log-entry-verdict.overbaked { color:#ef9a9a; }
+  .log-entry-meta { font-size:11px; color:#6a5f4a; margin-top:3px; }
+  .log-entry-score { font-size:11px; color:#9a8e78; }
+  .log-entry-del { background:none; border:none; color:#4a3f2f; font-size:18px;
+    cursor:pointer; padding:0 4px; align-self:center; }
+  .log-entry-del:hover { color:#ef5350; }
+  .save-log-btn { background:#1a6b3a; color:#c8e6c9; border:none;
+    border-radius:10px; padding:12px 20px; font-size:14px; font-weight:600;
+    cursor:pointer; margin:4px 16px 16px; display:flex; align-items:center;
+    justify-content:center; gap:8px; flex-shrink:0; position:relative; z-index:2; }
+  .save-log-btn:active { opacity:.8; }
+  @media print {
+    .log-btn, .log-panel-header button, .log-actions, .log-entry-del,
+    .save-log-btn { display:none !important; }
+    .log-panel { position:static; transform:none !important; }
+    body { background:#fff; color:#000; }
+    .log-entry { border:1px solid #ccc; border-left-width:4px;
+      break-inside:avoid; margin-bottom:8px; background:#fff !important;
+      color:#000 !important; }
+    .log-entry-prod, .log-entry-verdict, .log-entry-meta, .log-entry-score
+      { color:#000 !important; }
+  }
 </style>
 <script>
 (function(){
@@ -552,6 +615,7 @@
 
     <div class="result-actions">
       <button class="btn-primary" onclick="newCheck()" id="lblNewCheck">New check</button>
+      <button class="btn-secondary" style="background:#1a3a2a;color:#81c784;border-color:#2a5a3a" onclick="saveToLog()">📋 Save to log</button>
       <button class="btn-secondary" onclick="goTo('screenPhoto')" id="lblRetry">Retry photo</button>
     </div>
   </div>
@@ -737,6 +801,10 @@ function setLang(lang) {
   // Re-render product grid with new language
   document.getElementById('productGrid').innerHTML = '';
   renderProducts();
+  // Re-render result screen if it's currently visible
+  if (lastResult && document.getElementById('screenResult').classList.contains('active')) {
+    showResult(lastResult);
+  }
 }
 
 function t(key) {
@@ -834,6 +902,22 @@ const PRODUCTS_DATA = {
         overbaked:  ['Reduce oven temperature 10–15°C after first 20 minutes','Country sourdough has high water content — monitor colour closely in last 10 min','If crust darkens too fast, tent loosely with paper','Check thermostat calibration — oven may be running hot'],
       }
     },
+    focaccia: {
+      name: 'Focaccia 1250g', desc: 'Rosemary focaccia, 1250g — flat oiled bread, golden crust',
+      advice: {
+        underbaked: ['Extend bake by 4–6 minutes','Increase top heat — focaccia needs radiant heat to colour the surface','Check oil coverage — bare patches will colour unevenly','Ensure tray is fully preheated before loading'],
+        proper:     ['Golden colour achieved — good oil caramelisation','Check dimples are set and not doughy to the touch','Internal temperature should read 92–95°C at centre'],
+        overbaked:  ['Reduce top heat by 10°C','Shorten bake by 3–5 minutes','Focaccia colours fast in final minutes — monitor closely','Check oil quantity — insufficient oil accelerates browning'],
+      }
+    },
+    wholemeal_sourdough: {
+      name: 'Wholemeal Sourdough 800g', desc: 'Wholemeal sourdough, 800g — round scored loaf, flour-dusted dark crust',
+      advice: {
+        underbaked: ['Increase deck temperature by 5°C','Extend bake by 5–8 minutes — wholemeal takes longer to fully bake through','Knock on base — hollow sound confirms doneness','Heavy flour dusting can mask colour — check sides and base'],
+        proper:     ['Crust colour and development are correct','Check base is firm and evenly coloured','Internal temperature should read 97–99°C at centre','Allow minimum 1.5 hours cooling before cutting'],
+        overbaked:  ['Reduce deck temperature by 5–10°C after initial spring','Cover with paper in final third of bake','Wholemeal absorbs moisture slowly — do not overbake to compensate','Check fermentation — over-proofed wholemeal dough browns faster'],
+      }
+    },
     tiger_bread: {
       name: 'Tiger Bread', desc: 'Tiger bread — white dough, rice paste topping, oval loaf',
       advice: {
@@ -890,6 +974,22 @@ const PRODUCTS_DATA = {
         underbaked: ['Корочке нужно больше цвета — продлить выпечку на 5–8 минут','Убедиться, что температура деки не ниже 230°C для окончательной сушки','Постучать по дну — должен быть глухой звук','Открыть заслонку за 5 мин до конца для сушки корочки'],
         proper:     ['Глубокая растрескавшаяся корочка — правильная реакция Майяра','Внутренняя температура: 96–98°C в центре','Охлаждать на решётке минимум 45 минут перед разрезкой'],
         overbaked:  ['Снизить температуру духовки на 10–15°C после первых 20 минут','Высокая влажность — следить за цветом в последние 10 мин особенно внимательно','При быстром потемнении накрыть бумагой','Проверить калибровку термостата — духовка может работать горячее'],
+      }
+    },
+    focaccia: {
+      name: 'Фокачча 1250г', desc: 'Розмариновая фокачча, 1250г — плоский хлеб на масле, золотая корочка',
+      advice: {
+        underbaked: ['Продлить выпечку на 4–6 минут','Поднять верхний нагрев — фокачче нужно лучистое тепло для цвета','Проверить покрытие маслом — голые места колеруются неравномерно','Убедиться, что противень полностью прогрет'],
+        proper:     ['Золотой цвет достигнут — хорошая карамелизация масла','Ямочки должны быть зафиксированы и не липкими','Внутренняя температура 92–95°C в центре'],
+        overbaked:  ['Снизить верхний нагрев на 10°C','Сократить выпечку на 3–5 минут','Фокачча быстро темнеет в последние минуты — следить внимательно','Проверить количество масла — мало масла ускоряет потемнение'],
+      }
+    },
+    wholemeal_sourdough: {
+      name: 'Wholemeal Sourdough 800г', desc: 'Цельнозерновая закваска, 800г — надрезной круглый, тёмная корочка с мукой',
+      advice: {
+        underbaked: ['Поднять температуру деки на 5°C','Продлить выпечку на 5–8 минут — цельнозерновой требует времени','Постучать по дну — глухой звук подтверждает готовность','Мука может маскировать цвет — проверять бока и дно'],
+        proper:     ['Цвет корочки и развитие правильные','Дно должно быть твёрдым и равномерного цвета','Внутренняя температура 97–99°C в центре','Охлаждать минимум 1,5 часа перед разрезкой'],
+        overbaked:  ['Снизить температуру деки на 5–10°C после начального подъёма','Накрыть бумагой в последней трети','Цельнозерновой медленно впитывает влагу — не передерживать','Проверить ферментацию — перебродившее тесто темнеет быстрее'],
       }
     },
     tiger_bread: {
@@ -950,6 +1050,22 @@ const PRODUCTS_DATA = {
         overbaked:  ['Алғашқы 20 минуттан кейін пеш температурасын 10–15°C төмендетіңіз','Тез қараюда қағазбен жабыңыз'],
       }
     },
+    focaccia: {
+      name: 'Фокачча 1250г', desc: 'Розмаринді фокачча, 1250г — жалпақ май нан, алтын қыртыс',
+      advice: {
+        underbaked: ['Пісіруді 4–6 минутқа ұзартыңыз','Жоғарғы жылуды арттырыңыз — фокаччаға бет жылуы қажет','Май жабынын тексеріңіз','Науа алдын ала қыздырылғанын тексеріңіз'],
+        proper:     ['Алтын түс — майдың жақсы карамелизациясы','Шұңқырлар бекіген және жабысқақ емес болуы тиіс','Ішкі температура 92–95°C болуы тиіс'],
+        overbaked:  ['Жоғарғы жылуды 10°C төмендетіңіз','Пісіруді 3–5 минутқа қысқартыңыз','Соңғы минуттарда фокачча тез қарайады — мұқият бақылаңыз'],
+      }
+    },
+    wholemeal_sourdough: {
+      name: 'Wholemeal Sourdough 800г', desc: 'Тұтас дән ашытқы нан, 800г — дөңгелек кесілген, ұнмен қою қыртыс',
+      advice: {
+        underbaked: ['Дека температурасын 5°C арттырыңыз','Пісіруді 5–8 минутқа ұзартыңыз','Түбін тоқылдатыңыз','Ұн түсті маскалауы мүмкін — бүйірлерін тексеріңіз'],
+        proper:     ['Қыртыс дұрыс дамыған','Ішкі температура 97–99°C болуы тиіс','Кесуден бұрын кемінде 1,5 сағат суытыңыз'],
+        overbaked:  ['Дека температурасын 5–10°C төмендетіңіз','Соңғы үштен бірінде қағазбен жабыңыз'],
+      }
+    },
     tiger_bread: {
       name: 'Tiger Bread', desc: 'Жолбарыс нан — ақ тесто, күрішті паста жоғарыда, сопақша',
       advice: {
@@ -1006,6 +1122,22 @@ const PRODUCTS_DATA = {
         underbaked: ['Skórka potrzebuje więcej koloru — wydłuż pieczenie o 5–8 minut','Upewnij się, że temperatura pieca wynosi co najmniej 230°C','Pukaj w spód — powinien wydawać głuchy dźwięk'],
         proper:     ['Głęboka popękana skórka — prawidłowa reakcja Maillarda','Temperatura wewnętrzna: 96–98°C w centrum','Chłodź na kratce minimum 45 minut przed krojeniem'],
         overbaked:  ['Obniż temperaturę pieca o 10–15°C po pierwszych 20 minutach','Przykryj papierem przy zbyt szybkim ciemnieniu'],
+      }
+    },
+    focaccia: {
+      name: 'Focaccia 1250g', desc: 'Focaccia rozmarynowaowa, 1250g — płaski chleb z oliwą, złota skórka',
+      advice: {
+        underbaked: ['Wydłuż pieczenie o 4–6 minut','Zwiększ górne ciepło — focaccia potrzebuje promieniowania do zabarwienia','Sprawdź pokrycie oliwą — nagie miejsca będą się nierówno rumienić','Upewnij się, że blacha jest w pełni nagrzana'],
+        proper:     ['Złoty kolor osiągnięty — dobra karmelizacja oliwy','Zagłębienia powinny być ustawione i nie lepkie','Temperatura wewnętrzna powinna wynosić 92–95°C w centrum'],
+        overbaked:  ['Obniż górne ciepło o 10°C','Skróć pieczenie o 3–5 minut','Focaccia szybko ciemnieje w ostatnich minutach — uważnie monitoruj','Sprawdź ilość oliwy — za mało przyspiesza brązowienie'],
+      }
+    },
+    wholemeal_sourdough: {
+      name: 'Wholemeal Sourdough 800g', desc: 'Chleb razowy na zakwasie, 800g — okrągły nacinany, ciemna posypana skórka',
+      advice: {
+        underbaked: ['Zwiększ temperaturę pieca o 5°C','Wydłuż pieczenie o 5–8 minut — razowy wymaga więcej czasu','Pukaj w spód — głuchy dźwięk potwierdza gotowość','Mąka może maskować kolor — sprawdź boki i spód'],
+        proper:     ['Kolor skórki i rozwój są prawidłowe','Spód powinien być twardy i równomiernie zabarwiony','Temperatura wewnętrzna powinna wynosić 97–99°C w centrum','Chłodź minimum 1,5 godziny przed krojeniem'],
+        overbaked:  ['Obniż temperaturę pieca o 5–10°C po początkowym wzroście','Przykryj papierem w ostatniej trzeciej części pieczenia','Sprawdź fermentację — przepieczony razowy brązowieje szybciej'],
       }
     },
     tiger_bread: {
@@ -1070,6 +1202,16 @@ const PRODUCTS = [
       { r:131, g:96,  b:91,  label:'target', darkness:58.5 },
       { r:118, g:94,  b:93,  label:'tooD',   darkness:60.4 },
     ],
+  },
+  {
+    id: 'focaccia', icon: '🫒',
+    thresholds: { underbaked: { max: 32 }, proper: { min: 32, max: 48 }, overbaked: { min: 48 } },
+    shadeCard: null,
+  },
+  {
+    id: 'wholemeal_sourdough', icon: '🌾',
+    thresholds: { underbaked: { max: 55 }, proper: { min: 55, max: 68 }, overbaked: { min: 68 } },
+    shadeCard: null,
   },
   {
     id: 'tiger_bread', icon: '🐯',
@@ -1427,8 +1569,128 @@ function showToast(msg, dur = 2500) {
 
 // ── START ────────────────────────────────────────────────────────────
 init();
+
+// ── QC LOG ───────────────────────────────────────────────────────────
+let qcLog = JSON.parse(localStorage.getItem('bakery_qc_log') || '[]');
+
+function saveToLog() {
+  if (!lastResult || !selectedProduct) return;
+  const pd = getProductData(selectedProduct.id);
+  const L = I18N[LANG] || I18N.en;
+  const entry = {
+    id: Date.now(),
+    productId: selectedProduct.id,
+    productName: pd.name,
+    verdict: lastResult.verdict,
+    score: lastResult.darknessScore,
+    hex: '#' + toHex(lastResult.avgR) + toHex(lastResult.avgG) + toHex(lastResult.avgB),
+    ts: new Date().toISOString(),
+    zones: (lastResult.zoneResults || []).map(z => z.darkness.toFixed(1)),
+  };
+  qcLog.unshift(entry);
+  if (qcLog.length > 200) qcLog = qcLog.slice(0, 200);
+  localStorage.setItem('bakery_qc_log', JSON.stringify(qcLog));
+  updateLogCount();
+  showToast('✅ Saved to QC Log');
+}
+
+function updateLogCount() {
+  const el = document.getElementById('logCount');
+  if (el) el.textContent = qcLog.length;
+}
+
+function openLog() {
+  renderLog();
+  document.getElementById('logPanel').classList.add('open');
+}
+
+function closeLog() {
+  document.getElementById('logPanel').classList.remove('open');
+}
+
+function clearLog() {
+  if (!confirm('Clear all log entries?')) return;
+  qcLog = [];
+  localStorage.removeItem('bakery_qc_log');
+  updateLogCount();
+  renderLog();
+}
+
+function deleteLogEntry(id) {
+  qcLog = qcLog.filter(e => e.id !== id);
+  localStorage.setItem('bakery_qc_log', JSON.stringify(qcLog));
+  updateLogCount();
+  renderLog();
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+
+function renderLog() {
+  const container = document.getElementById('logEntries');
+  const empty = document.getElementById('logEmpty');
+  if (!qcLog.length) {
+    empty.style.display = '';
+    container.innerHTML = '';
+    container.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+  const ICONS = { underbaked:'💧', proper:'✅', overbaked:'🔥' };
+  const VLABELS = { underbaked:'Underbaked', proper:'Proper Baked', overbaked:'Overbaked' };
+  container.innerHTML = qcLog.map(e => `
+    <div class="log-entry ${e.verdict}">
+      <div class="log-entry-icon">${ICONS[e.verdict] || '—'}</div>
+      <div class="log-entry-body">
+        <div class="log-entry-prod">${e.productName}</div>
+        <div class="log-entry-verdict ${e.verdict}">${VLABELS[e.verdict] || e.verdict}</div>
+        <div class="log-entry-score">Darkness: <strong>${e.score.toFixed(0)}</strong>/100 &nbsp;·&nbsp; ${e.hex.toUpperCase()}
+          ${e.zones && e.zones.length > 1 ? ' &nbsp;·&nbsp; Zones: ' + e.zones.join(', ') : ''}
+        </div>
+        <div class="log-entry-meta">${formatDate(e.ts)}</div>
+      </div>
+      <button class="log-entry-del" onclick="deleteLogEntry(${e.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function exportPDF() {
+  // Print the log panel — @media print CSS hides all buttons
+  const panel = document.getElementById('logPanel');
+  panel.classList.add('open');
+  setTimeout(() => window.print(), 100);
+}
+
+// Init log count on load
+updateLogCount();
+
 applyLang();
 </script>
+
+
+<!-- QC Log floating button -->
+<button class="log-btn" id="logBtn" onclick="openLog()">
+  📋 <span id="logBtnLabel">QC Log</span>
+  <span class="log-count" id="logCount">0</span>
+</button>
+
+<!-- QC Log panel -->
+<div class="log-panel" id="logPanel">
+  <div class="log-panel-header">
+    <button class="back-btn" onclick="closeLog()">‹</button>
+    <h2 id="logPanelTitle">📋 QC Log</h2>
+  </div>
+  <div class="log-actions">
+    <button class="log-action-btn primary" onclick="exportPDF()">⬇ Export PDF</button>
+    <button class="log-action-btn danger"  onclick="clearLog()">🗑 Clear all</button>
+  </div>
+  <div class="log-entries" id="logEntries">
+    <div class="log-empty" id="logEmpty">No checks logged yet.<br>Run an analysis and save the result.</div>
+  </div>
+  <button class="save-log-btn" onclick="exportPDF()">⬇️ Save as PDF / Print</button>
+</div>
 
 <!-- Footer -->
 <footer style="text-align:center;padding:18px 16px 10px;font-size:11px;color:#5a5040;letter-spacing:0.03em;max-width:480px;margin:0 auto;">
