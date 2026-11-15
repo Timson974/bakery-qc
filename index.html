@@ -689,6 +689,7 @@ if (typeof pdfjsLib !== 'undefined') {
     <div class="result-actions">
       <button class="btn-primary" onclick="newCheck()" id="lblNewCheck">New check</button>
       <button class="btn-secondary" style="background:#1a3a2a;color:#81c784;border-color:#2a5a3a" onclick="saveToLog()">📋 Save to log</button>
+      <button class="btn-secondary" onclick="savePhoto()">💾 Save photo</button>
       <button class="btn-secondary" onclick="goTo('screenPhoto')" id="lblRetry">Retry photo</button>
     </div>
   </div>
@@ -1504,6 +1505,27 @@ function runAnalysis() {
 
   lastResult = { verdict, avgR, avgG, avgB, darknessScore, warmth, zoneResults };
   showResult(lastResult);
+}
+
+function savePhoto() {
+  if (!lastResult || !selectedProduct) return;
+  const canvas = document.getElementById('analysisCanvas');
+  if (!canvas || canvas.width === 0) { showToast('No photo to save'); return; }
+  // filename: focaccia_proper_56_20261115.jpg
+  const datePart = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const idPart   = selectedProduct.id.replace(/[^a-z0-9]/gi,'_');
+  const verdict  = lastResult.verdict;
+  const score    = Math.round(lastResult.darknessScore);
+  const filename = `${idPart}_${verdict}_${score}_${datePart}.jpg`;
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Photo saved: ' + filename);
+  }, 'image/jpeg', 0.92);
 }
 
 // ── RESULT DISPLAY ───────────────────────────────────────────────────
