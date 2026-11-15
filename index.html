@@ -1561,6 +1561,7 @@ function closeShadeModal(e) {
 // ── TOAST ────────────────────────────────────────────────────────────
 function showToast(msg, dur = 2500) {
   const t = document.getElementById('toast');
+  if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), dur);
@@ -1629,16 +1630,12 @@ function formatDate(iso) {
 
 function renderLog() {
   const container = document.getElementById('logEntries');
-  const empty = document.getElementById('logEmpty');
+  const ICONS  = { underbaked:'💧', proper:'✅', overbaked:'🔥' };
+  const VLABELS = { underbaked:'Underbaked', proper:'Proper Baked', overbaked:'Overbaked' };
   if (!qcLog.length) {
-    empty.style.display = '';
-    container.innerHTML = '';
-    container.appendChild(empty);
+    container.innerHTML = '<div class="log-empty">No checks logged yet.<br>Run an analysis and save the result.</div>';
     return;
   }
-  empty.style.display = 'none';
-  const ICONS = { underbaked:'💧', proper:'✅', overbaked:'🔥' };
-  const VLABELS = { underbaked:'Underbaked', proper:'Proper Baked', overbaked:'Overbaked' };
   container.innerHTML = qcLog.map(e => `
     <div class="log-entry ${e.verdict}">
       <div class="log-entry-icon">${ICONS[e.verdict] || '—'}</div>
@@ -1747,9 +1744,7 @@ window.addEventListener('appinstalled', () => {
     <button class="log-action-btn primary" onclick="exportPDF()">⬇ Export PDF</button>
     <button class="log-action-btn danger"  onclick="clearLog()">🗑 Clear all</button>
   </div>
-  <div class="log-entries" id="logEntries">
-    <div class="log-empty" id="logEmpty">No checks logged yet.<br>Run an analysis and save the result.</div>
-  </div>
+  <div class="log-entries" id="logEntries"></div>
   <button class="save-log-btn" onclick="exportPDF()">⬇️ Save as PDF / Print</button>
 </div>
 
