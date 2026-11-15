@@ -1314,7 +1314,6 @@ function showResult(res) {
   // Swatch
   const hex = `#${toHex(res.avgR)}${toHex(res.avgG)}${toHex(res.avgB)}`;
   document.getElementById('swatchBox').style.background = hex;
-  const L = I18N[LANG] || I18N.en;
   let zoneHtml = '';
   if (res.zoneResults && res.zoneResults.length > 1) {
     zoneHtml = `<div class="zone-readings">` +
