@@ -438,10 +438,9 @@
   .log-btn .log-count { background:#c8a96e; color:#1a1612; border-radius:50%;
     width:18px; height:18px; font-size:11px; display:inline-flex;
     align-items:center; justify-content:center; font-weight:700; }
-  .log-panel { position:fixed; inset:0; z-index:900; background:#1a1612;
-    display:flex; flex-direction:column; transform:translateY(100%);
-    transition:transform .3s ease; }
-  .log-panel.open { transform:translateY(0); }
+  .log-panel { position:fixed; inset:0; z-index:1000; background:#1a1612;
+    display:none; flex-direction:column; }
+  .log-panel.open { display:flex; }
   .log-panel-header { display:flex; align-items:center; gap:12px;
     padding:16px; border-bottom:1px solid #2a2318; background:#1f1a14;
     flex-shrink:0; }
@@ -1670,31 +1669,9 @@ applyLang();
 </script>
 
 
-<!-- QC Log floating button -->
-<button class="log-btn" id="logBtn" onclick="openLog()">
-  📋 <span id="logBtnLabel">QC Log</span>
-  <span class="log-count" id="logCount">0</span>
-</button>
-
-<!-- QC Log panel -->
-<div class="log-panel" id="logPanel">
-  <div class="log-panel-header">
-    <button class="back-btn" onclick="closeLog()">‹</button>
-    <h2 id="logPanelTitle">📋 QC Log</h2>
-  </div>
-  <div class="log-actions">
-    <button class="log-action-btn primary" onclick="exportPDF()">⬇ Export PDF</button>
-    <button class="log-action-btn danger"  onclick="clearLog()">🗑 Clear all</button>
-  </div>
-  <div class="log-entries" id="logEntries">
-    <div class="log-empty" id="logEmpty">No checks logged yet.<br>Run an analysis and save the result.</div>
-  </div>
-  <button class="save-log-btn" onclick="exportPDF()">⬇️ Save as PDF / Print</button>
-</div>
-
 <!-- Footer -->
 <footer style="text-align:center;padding:18px 16px 10px;font-size:11px;color:#5a5040;letter-spacing:0.03em;max-width:480px;margin:0 auto;">
-  © 2026 Flourish Bakery — All rights reserved
+  © 2026 Timur Utepov — All rights reserved
 </footer>
 
 <!-- Install Banner -->
@@ -1754,5 +1731,27 @@ window.addEventListener('appinstalled', () => {
   document.getElementById('install-banner').style.display = 'none';
 });
 </script>
+<!-- QC Log floating button -->
+<button class="log-btn" id="logBtn" onclick="openLog()">
+  📋 <span id="logBtnLabel">QC Log</span>
+  <span class="log-count" id="logCount">0</span>
+</button>
+
+<!-- QC Log panel -->
+<div class="log-panel" id="logPanel">
+  <div class="log-panel-header">
+    <button class="back-btn" onclick="closeLog()">‹</button>
+    <h2 id="logPanelTitle">📋 QC Log</h2>
+  </div>
+  <div class="log-actions">
+    <button class="log-action-btn primary" onclick="exportPDF()">⬇ Export PDF</button>
+    <button class="log-action-btn danger"  onclick="clearLog()">🗑 Clear all</button>
+  </div>
+  <div class="log-entries" id="logEntries">
+    <div class="log-empty" id="logEmpty">No checks logged yet.<br>Run an analysis and save the result.</div>
+  </div>
+  <button class="save-log-btn" onclick="exportPDF()">⬇️ Save as PDF / Print</button>
+</div>
+
 </body>
 </html>
