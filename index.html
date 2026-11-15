@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,6 +7,23 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a1612">
 <title>Bakery QC</title>
+<style>
+  .lang-btn { background:none; border:1px solid #3d3528; color:#9a8e78; padding:4px 9px;
+    border-radius:6px; font-size:11px; cursor:pointer; margin:0 2px; }
+  .lang-btn.active { background:#c8832a; color:#fff; border-color:#c8832a; }
+  .lang-row { display:flex; justify-content:flex-end; gap:2px; padding:2px 4px 0; flex-wrap:wrap; }
+  .shade-card-section { margin:12px 0; padding:12px; background:#231f1a;
+    border-radius:10px; border:1px solid #3d3528; }
+  .shade-card-title { font-size:12px; color:#9a8e78; text-transform:uppercase;
+    letter-spacing:.05em; margin-bottom:8px; }
+  .shade-swatches { display:flex; gap:8px; }
+  .shade-swatch { flex:1; border-radius:7px; padding:10px 4px 8px; text-align:center;
+    min-height:72px; display:flex; flex-direction:column; align-items:center;
+    justify-content:flex-end; gap:4px; border:1px solid rgba(255,255,255,.12); }
+  .shade-swatch-label { font-size:10px; color:rgba(255,255,255,.7); line-height:1.2; }
+  .shade-swatch-val { font-size:14px; font-weight:700; color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,.7); }
+</style>
 <link rel="apple-touch-icon" href="data:image/png;base64,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">
 <style>
   :root {
@@ -378,17 +395,23 @@
   <!-- HEADER -->
   <header>
     <span class="logo">🔬</span>
-    <div>
+    <div style="flex:1">
       <h1>Bakery QC</h1>
-      <div class="sub">Bake quality check</div>
+      <div class="sub" id="subTitle">Bake quality check</div>
+    </div>
+    <div class="lang-row">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('kk')">KAZ</button>
+      <button class="lang-btn" onclick="setLang('pl')">PL</button>
     </div>
   </header>
 
   <!-- SCREEN 1: Product Select -->
   <div id="screenSelect" class="screen active">
-    <div class="section-title">Select product</div>
+    <div class="section-title" id="lblSelectProduct">Select product</div>
     <div class="product-grid" id="productGrid"></div>
-    <button class="btn-primary" id="btnNext" disabled>Analyse →</button>
+    <button class="btn-primary" id="btnNext" disabled data-i18n="analyse_btn">Analyse →</button>
   </div>
 
   <!-- SCREEN 2: Photo -->
@@ -397,7 +420,7 @@
       <button class="back-btn" onclick="goTo('screenSelect')">‹</button>
       <div>
         <div class="cam-title" id="camTitle">—</div>
-        <div class="cam-subtitle">Take or upload a photo of the crust</div>
+        <div class="cam-subtitle" id="lblPhotoSub">Take or upload a photo of the crust</div>
       </div>
     </div>
 
@@ -405,7 +428,7 @@
       <img id="previewImg" class="preview" style="display:none">
       <div id="photoHint" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
         <span class="photo-hint">📷</span>
-        <span class="photo-hint-text">Tap to take photo<br>or upload from gallery</span>
+        <span class="photo-hint-text" id="lblTapHint">Tap to take photo<br>or upload from gallery</span>
       </div>
       <div id="sampleOverlay"></div>
     </div>
@@ -417,10 +440,16 @@
 
     <div class="sample-zone-info">
       <span class="icon">ℹ️</span>
-      <span>The orange frame samples the lower crust — away from flour-dusted top. Frame the loaf so its sides are visible in the lower half of the photo.</span>
+      <span id="lblZoneInfo">The orange frame samples the lower crust — away from flour-dusted top. Frame the loaf so its sides are visible in the lower half of the photo.</span>
     </div>
 
-    <button class="btn-analyze" id="btnAnalyze">Analyse colour →</button>
+    <!-- Shade card reference for selected product -->
+    <div class="shade-card-section" id="shadeCardSection" style="display:none">
+      <div class="shade-card-title" id="lblShadeRef">Acrylamide shade reference</div>
+      <div class="shade-swatches" id="shadeSwatches"></div>
+    </div>
+
+    <button class="btn-analyze" id="btnAnalyze" data-i18n="analyse_colour_btn">Analyse colour →</button>
 
     <!-- Two separate inputs: gallery (no capture) and camera (with capture) -->
     <input type="file" id="fileGallery" accept="image/*" style="display:none">
@@ -433,7 +462,7 @@
     <div class="result-header">
       <button class="back-btn" onclick="goTo('screenPhoto')">‹</button>
       <div>
-        <div class="cam-title">Analysis result</div>
+        <div class="cam-title" id="lblAnalysisResult">Analysis result</div>
         <div class="cam-subtitle" id="resultProduct">—</div>
       </div>
     </div>
@@ -445,10 +474,10 @@
     </div>
 
     <div class="color-analysis">
-      <h3>Colour reading</h3>
+      <h3 id="lblColourReading">Colour reading</h3>
       <div class="color-bar-container">
         <div class="color-bar-label">
-          <span>Underbaked</span><span>Proper</span><span>Overbaked</span>
+          <span id="lblUnder">Underbaked</span><span id="lblProper">Proper</span><span id="lblOver">Overbaked</span>
         </div>
         <div class="color-bar-track">
           <div class="color-bar-cursor" id="colorCursor" style="left:50%"></div>
@@ -461,13 +490,13 @@
     </div>
 
     <div class="advice-block" id="adviceBlock">
-      <h3>Recommendations</h3>
+      <h3 id="lblRecs">Recommendations</h3>
       <ul class="advice-list" id="adviceList"></ul>
     </div>
 
     <div class="result-actions">
-      <button class="btn-primary" onclick="newCheck()">New check</button>
-      <button class="btn-secondary" onclick="goTo('screenPhoto')">Retry photo</button>
+      <button class="btn-primary" onclick="newCheck()" id="lblNewCheck">New check</button>
+      <button class="btn-secondary" onclick="goTo('screenPhoto')" id="lblRetry">Retry photo</button>
     </div>
   </div>
 
@@ -476,210 +505,451 @@
 <div id="toast"></div>
 
 <script>
+// ── i18n ─────────────────────────────────────────────────────────────
+let LANG = 'en';
+
+const I18N = {
+  en: {
+    subTitle: 'Bake quality check',
+    selectProduct: 'Select product',
+    analyse_btn: 'Analyse →',
+    photoSub: 'Take or upload a photo of the crust',
+    tapHint: 'Tap to take photo\nor upload from gallery',
+    zoneInfo: 'The orange frame samples the lower crust — away from flour-dusted top. Frame the loaf so its sides are visible in the lower half of the photo.',
+    shadeRef: 'Acrylamide shade reference',
+    analysisResult: 'Analysis result',
+    colourReading: 'Colour reading',
+    underLbl: 'Underbaked', properLbl: 'Proper', overLbl: 'Overbaked',
+    recs: 'Recommendations',
+    newCheck: 'New check',
+    retry: 'Retry photo',
+    analyseColour: 'Analyse colour →',
+    gallery: '📂 Gallery',
+    camera: '📷 Camera',
+    verdicts: { underbaked: 'Underbaked', proper: 'Proper Baked', overbaked: 'Overbaked' },
+    shadeLabels: { light: 'Light (1)', target: 'Target (3)', tooD: 'Too Dark (4)' },
+  },
+  ru: {
+    subTitle: 'Контроль качества выпечки',
+    selectProduct: 'Выберите продукт',
+    analyse_btn: 'Анализировать →',
+    photoSub: 'Сфотографируйте корочку хлеба',
+    tapHint: 'Нажмите для фото\nили выберите из галереи',
+    zoneInfo: 'Оранжевая рамка замеряет нижнюю корочку — в стороне от посыпки мукой сверху. Держите буханку так, чтобы боковые стороны были видны в нижней половине фото.',
+    shadeRef: 'Шкала акриламида (эталон)',
+    analysisResult: 'Результат анализа',
+    colourReading: 'Цвет корочки',
+    underLbl: 'Недопечено', properLbl: 'Норма', overLbl: 'Перепечено',
+    recs: 'Рекомендации',
+    newCheck: 'Новая проверка',
+    retry: 'Переснять',
+    analyseColour: 'Анализировать цвет →',
+    gallery: '📂 Галерея',
+    camera: '📷 Камера',
+    verdicts: { underbaked: 'Недопечено', proper: 'Норма', overbaked: 'Перепечено' },
+    shadeLabels: { light: 'Светлый (1)', target: 'Цель (3)', tooD: 'Тёмный (4)' },
+  },
+  kk: {
+    subTitle: 'Пісіру сапасын бақылау',
+    selectProduct: 'Өнімді таңдаңыз',
+    analyse_btn: 'Талдау →',
+    photoSub: 'Нан қыртысының фотосын түсіріңіз',
+    tapHint: 'Фото түсіру үшін басыңыз\nнемесе галереяdан таңдаңыз',
+    zoneInfo: 'Қызғылт сары шеңбер төменгі қыртысты өлшейді — үстіндегі ұннан алыс. Нанды оның бүйірлері фотоның төменгі жартысында көрінетіндей ұстаңыз.',
+    shadeRef: 'Акриламид реңк эталоны',
+    analysisResult: 'Талдау нәтижесі',
+    colourReading: 'Қыртыс түсі',
+    underLbl: 'Аз пісірілген', properLbl: 'Норма', overLbl: 'Артық пісірілген',
+    recs: 'Ұсыныстар',
+    newCheck: 'Жаңа тексеру',
+    retry: 'Қайта түсіру',
+    analyseColour: 'Түсті талдау →',
+    gallery: '📂 Галерея',
+    camera: '📷 Камера',
+    verdicts: { underbaked: 'Аз пісірілген', proper: 'Норма', overbaked: 'Артық пісірілген' },
+    shadeLabels: { light: 'Ашық (1)', target: 'Мақсат (3)', tooD: 'Тым қою (4)' },
+  },
+  pl: {
+    subTitle: 'Kontrola jakości wypieku',
+    selectProduct: 'Wybierz produkt',
+    analyse_btn: 'Analizuj →',
+    photoSub: 'Zrób lub wgraj zdjęcie skórki',
+    tapHint: 'Dotknij, aby zrobić zdjęcie\nlub wybrać z galerii',
+    zoneInfo: 'Pomarańczowa ramka próbkuje dolną skórkę — z dala od mąki na górze. Ustaw bochenek tak, aby jego boki były widoczne w dolnej połowie zdjęcia.',
+    shadeRef: 'Wzornik odcieni akryloamidu',
+    analysisResult: 'Wynik analizy',
+    colourReading: 'Odczyt koloru',
+    underLbl: 'Niedopieczony', properLbl: 'Prawidłowy', overLbl: 'Przepieczony',
+    recs: 'Zalecenia',
+    newCheck: 'Nowa kontrola',
+    retry: 'Ponów zdjęcie',
+    analyseColour: 'Analizuj kolor →',
+    gallery: '📂 Galeria',
+    camera: '📷 Aparat',
+    verdicts: { underbaked: 'Niedopieczony', proper: 'Prawidłowy', overbaked: 'Przepieczony' },
+    shadeLabels: { light: 'Jasny (1)', target: 'Docelowy (3)', tooD: 'Za ciemny (4)' },
+  },
+};
+
+function setLang(lang) {
+  LANG = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang ||
+      (lang==='kk' && b.textContent.trim()==='KAZ') ||
+      (lang==='en' && b.textContent.trim()==='EN') ||
+      (lang==='ru' && b.textContent.trim()==='RU') ||
+      (lang==='pl' && b.textContent.trim()==='PL'));
+  });
+  applyLang();
+  // Re-render product grid with new language
+  document.getElementById('productGrid').innerHTML = '';
+  renderProducts();
+}
+
+function t(key) {
+  return (I18N[LANG] || I18N.en)[key] || (I18N.en)[key] || key;
+}
+
+function applyLang() {
+  const L = I18N[LANG] || I18N.en;
+  const set = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+  set('subTitle', L.subTitle);
+  set('lblSelectProduct', L.selectProduct);
+  set('btnNext', L.analyse_btn);
+  set('lblPhotoSub', L.photoSub);
+  set('lblTapHint', L.tapHint);
+  set('lblZoneInfo', L.zoneInfo);
+  set('lblShadeRef', L.shadeRef);
+  set('lblAnalysisResult', L.analysisResult);
+  set('lblColourReading', L.colourReading);
+  set('lblUnder', L.underLbl);
+  set('lblProper', L.properLbl);
+  set('lblOver', L.overLbl);
+  set('lblRecs', L.recs);
+  set('lblNewCheck', L.newCheck);
+  set('lblRetry', L.retry);
+  set('btnAnalyze', L.analyseColour);
+  document.querySelectorAll('.btn-secondary').forEach(b => {
+    if (b.onclick && b.onclick.toString().includes('fileGallery')) b.textContent = L.gallery;
+    if (b.onclick && b.onclick.toString().includes('fileCamera'))  b.textContent = L.camera;
+  });
+}
+
 // ── PRODUCT DEFINITIONS ──────────────────────────────────────────────
-// Color ranges: based on typical bread crust L* (lightness in CIELAB)
-// Underbaked: very light/pale (high L*, low saturation)
-// Proper: golden-brown (medium L*, warm hue)
-// Overbaked: very dark (low L*)
-// We'll use a simplified "darkness score" (0-100) from sampled RGB:
-// score = 100 - (L/255)*100  where L = 0.299R + 0.587G + 0.114B
-// Also use "warmth" = (R-B)/255 as secondary axis
+// CALIBRATED from Flourish Acrylamide Shade Cards + production photos (Nov 2026)
+// Thresholds: darkness score = 100 - (luma/255)*100
+//
+// Ancient 800g (card 1 top):  Light=48.6, Target=52.9, TooD=64.2 → proper 50-62
+// Ancient 400g (card 1 bot):  Light=49.8, Target=57.0, TooD=63.2 → proper 52-61
+// Country SD   (card 2 top):  Light=51.3, Target=58.5, TooD=60.4 → proper 53-59
+// Classic SD   (card 2 bot):  Light=53.9, Target=58.2, TooD=56.2 → proper 54-60 (glare on card)
+// Ancient Blmr (card 3):      Light=50.7, Target=60.4, TooD=62.6 → proper 53-61
+// Rustic SD: production photos proper range 40-57, shade card mapped → proper 42-60
+// Tiger Bread: top-centre zone, proper ~44-68 from prior calibration
 
-// CALIBRATED against real production photos (Nov 2026)
-// Sampling zone: lower sides of loaf (avoids flour dusting on top crust)
-// Darkness score = 100 - (luma/255)*100
-// Proper ranges derived from measured photos, all confirmed as correct bake:
-//   Ancient Loaf:        lower_side darkness 52–56%  → proper 44–65%
-//   Classic Sourdough:   lower_side darkness 40–42%  → proper 33–54%
-//   Rustic Sourdough:    lower_side darkness 46–58%  → proper 40–63%
+// shadeCard: RGB swatches shown as reference on photo screen
+// [light, target, tooD] each {r,g,b,darkness,label_key}
 
+const PRODUCTS_DATA = {
+  en: {
+    ancient800: {
+      name: 'Ancient Loaf 800g', desc: 'Ancient grain tin loaf, 800g — dark dusted crust',
+      advice: {
+        underbaked: ['Increase deck temperature by 5–10°C','Extend bake time by 3–5 minutes','Check steam injection — excess steam prevents crust browning','Ensure oven is fully preheated before loading'],
+        proper:     ['Bake parameters are correct — maintain current settings','Monitor consistency across the batch','Log temperature and time for reference'],
+        overbaked:  ['Reduce deck temperature by 5–10°C','Shorten bake time by 2–4 minutes','Check oven calibration — thermostat may read low','Consider earlier steam-off to slow browning'],
+      }
+    },
+    ancient400: {
+      name: 'Ancient Loaf 400g', desc: 'Ancient grain tin loaf, 400g — dark dusted crust',
+      advice: {
+        underbaked: ['Increase deck temperature by 5–10°C','Extend bake time by 2–4 minutes','Smaller loaves brown faster — check 5 min before usual pull time','Ensure oven is fully preheated before loading'],
+        proper:     ['Bake parameters are correct — maintain current settings','Monitor for even browning across the batch','Internal temperature should read 94–96°C'],
+        overbaked:  ['Reduce deck temperature by 5°C','Shorten bake time by 2–3 minutes','400g loaf is thinner — overcolouring happens quickly','Check oven calibration — thermostat may read low'],
+      }
+    },
+    ancient_bloomer: {
+      name: 'Ancient Bloomer 800g', desc: 'Ancient grain bloomer, 800g — scored oval',
+      advice: {
+        underbaked: ['Increase deck temperature by 5°C','Extend bake by 3–4 minutes','Check steam vent timing — open vent after first 15 min','Ensure scoring is deep enough to allow full oven spring'],
+        proper:     ['Colour and crust development are on target','Check score has opened evenly along the full length','Internal temperature should read 95–97°C'],
+        overbaked:  ['Reduce top heat by 5°C','Shorten bake by 2–3 minutes','Rotate trays halfway through if oven has hot spots','Check fermentation time — over-proofed dough browns faster'],
+      }
+    },
+    classic_sourdough: {
+      name: 'Classic Sourdough 800g', desc: 'Classic sourdough, 800g — scored oval, open crumb',
+      advice: {
+        underbaked: ['Increase deck temperature by 5°C','Extend bake by 3–5 minutes at lower steam','Ensure full oven spring before venting steam','Score depth may need adjustment — shallow scores trap moisture'],
+        proper:     ['Crust colour is on target','Check bottom crust — should be firm and evenly coloured','Internal temperature should read 96–98°C at centre'],
+        overbaked:  ['Reduce top heat by 5°C, maintain bottom heat','Shorten bake by 2–3 minutes','Load at consistent intervals to stabilise oven temperature','Check if proofing was too long — over-proofed dough browns faster'],
+      }
+    },
+    rustic_sourdough: {
+      name: 'Rustic Sourdough', desc: 'Rustic sourdough, 400g & 800g — round, flour-dusted',
+      advice: {
+        underbaked: ['Increase stone/deck temperature — target 240°C','Extend bake by 5–8 minutes (high hydration needs longer dry-out)','Knock on base — hollow sound confirms doneness regardless of colour','Note: heavy flour dusting makes top crust appear lighter — check sides'],
+        proper:     ['Crust development is correct — good colour on sides and base','Internal temperature should read 96–98°C at centre','Allow 1 hour minimum cooling before cutting'],
+        overbaked:  ['Reduce deck temperature by 10°C after initial spring (first 15 min)','Cover with paper for final third of bake if crust darkening too fast','Check if oven has hot spots — rotate loaves halfway through','Shorter fermentation may help control browning rate'],
+      }
+    },
+    country_sourdough: {
+      name: 'Country Sourdough', desc: 'Country sourdough — round scored loaf, dark crackled crust',
+      advice: {
+        underbaked: ['Crust needs more colour — extend bake 5–8 minutes','Ensure deck temperature is at least 230°C for final dry-out','Knock on base — should sound hollow before pulling','Open oven damper in last 5 min to aid crust drying'],
+        proper:     ['Deep crackled crust achieved — correct Maillard development','Check internal temperature: 96–98°C at centre','Allow to cool on wire rack minimum 45 minutes before cutting'],
+        overbaked:  ['Reduce oven temperature 10–15°C after first 20 minutes','Country sourdough has high water content — monitor colour closely in last 10 min','If crust darkens too fast, tent loosely with paper','Check thermostat calibration — oven may be running hot'],
+      }
+    },
+    tiger_bread: {
+      name: 'Tiger Bread', desc: 'Tiger bread — white dough, rice paste topping, oval loaf',
+      advice: {
+        underbaked: ['Rice paste topping needs more heat to develop colour — extend bake 4–6 minutes','Target deep orange-brown pattern, not pale yellow','Increase top heat if deck oven — tiger colour comes from radiant heat above','Check rice paste consistency — too thick will colour unevenly'],
+        proper:     ['Tiger pattern is correct deep orange — good rice paste development','Crust should be firm and crisp when tapped','Allow 20–30 minutes cooling before slicing'],
+        overbaked:  ['Rice paste is burning — reduce top heat or shorten bake by 3–5 minutes','Tiger pattern should be orange-brown, not dark brown/black','Lower oven temperature 10°C for next batch','Check rice paste recipe — excess sugar accelerates browning'],
+      }
+    },
+  },
+  ru: {
+    ancient800: {
+      name: 'Ancient Loaf 800г', desc: 'Хлеб из древнего зерна в форме, 800г — тёмная корочка',
+      advice: {
+        underbaked: ['Поднять температуру деки на 5–10°C','Продлить выпечку на 3–5 минут','Проверить подачу пара — излишний пар мешает образованию корочки','Убедиться, что духовка полностью прогрета перед загрузкой'],
+        proper:     ['Параметры выпечки в норме — сохранять текущие настройки','Следить за равномерностью цвета по партии','Записать температуру и время для справки'],
+        overbaked:  ['Снизить температуру деки на 5–10°C','Сократить время выпечки на 2–4 минуты','Проверить калибровку духовки — термостат может занижать показания','Рассмотреть более раннее отключение пара'],
+      }
+    },
+    ancient400: {
+      name: 'Ancient Loaf 400г', desc: 'Хлеб из древнего зерна в форме, 400г — тёмная корочка',
+      advice: {
+        underbaked: ['Поднять температуру деки на 5–10°C','Продлить выпечку на 2–4 минуты','Маленькие буханки румянятся быстрее — проверить за 5 минут до обычного времени','Убедиться, что духовка полностью прогрета'],
+        proper:     ['Параметры выпечки в норме — сохранять текущие настройки','Следить за равномерностью по партии','Внутренняя температура должна быть 94–96°C'],
+        overbaked:  ['Снизить температуру деки на 5°C','Сократить время выпечки на 2–3 минуты','Буханка 400г тоньше — перекрас происходит быстро','Проверить калибровку духовки'],
+      }
+    },
+    ancient_bloomer: {
+      name: 'Ancient Bloomer 800г', desc: 'Хлеб-блумер из древнего зерна, 800г — надрезной овал',
+      advice: {
+        underbaked: ['Поднять температуру деки на 5°C','Продлить выпечку на 3–4 минуты','Проверить время открытия заслонки — открывать после первых 15 мин','Убедиться, что надрезы достаточно глубокие для полного подъёма'],
+        proper:     ['Цвет и развитие корочки в норме','Проверить, что надрез раскрылся равномерно по всей длине','Внутренняя температура должна быть 95–97°C'],
+        overbaked:  ['Снизить верхний нагрев на 5°C','Сократить выпечку на 2–3 минуты','Перевернуть противни в середине выпечки, если есть горячие точки','Проверить время ферментации — перебродившее тесто темнеет быстрее'],
+      }
+    },
+    classic_sourdough: {
+      name: 'Classic Sourdough 800г', desc: 'Классический закваска, 800г — надрезной овал',
+      advice: {
+        underbaked: ['Поднять температуру деки на 5°C','Продлить выпечку на 3–5 мин при меньшем паре','Дать полный подъём до открытия заслонки','Глубина надрезов может требовать корректировки — мелкие надрезы удерживают влагу'],
+        proper:     ['Цвет корочки в норме','Проверить нижнюю корочку — должна быть твёрдой и равномерного цвета','Внутренняя температура должна быть 96–98°C в центре'],
+        overbaked:  ['Снизить верхний нагрев на 5°C, сохранить нижний','Сократить выпечку на 2–3 минуты','Загружать с постоянным интервалом для стабилизации температуры духовки','Проверить время расстойки — перебродившее тесто темнеет быстрее'],
+      }
+    },
+    rustic_sourdough: {
+      name: 'Rustic Sourdough', desc: 'Деревенская закваска, 400г и 800г — круглый, посыпан мукой',
+      advice: {
+        underbaked: ['Поднять температуру камня/деки — цель 240°C','Продлить выпечку на 5–8 минут (высокая гидратация требует долгой сушки)','Постучать по дну — глухой звук подтверждает готовность независимо от цвета','Примечание: обильная мука делает верхнюю корочку светлее — проверять бока'],
+        proper:     ['Корочка развита правильно — хороший цвет по бокам и дну','Внутренняя температура должна быть 96–98°C в центре','Охлаждать минимум 1 час перед разрезкой'],
+        overbaked:  ['Снизить температуру деки на 10°C после начального подъёма (первые 15 мин)','Накрыть бумагой в последней трети выпечки, если корочка темнеет слишком быстро','Проверить горячие точки в духовке — переворачивать буханки в середине','Более короткая ферментация может помочь контролировать скорость потемнения'],
+      }
+    },
+    country_sourdough: {
+      name: 'Country Sourdough', desc: 'Деревенский хлеб-закваска — надрезной, тёмная растрескавшаяся корочка',
+      advice: {
+        underbaked: ['Корочке нужно больше цвета — продлить выпечку на 5–8 минут','Убедиться, что температура деки не ниже 230°C для окончательной сушки','Постучать по дну — должен быть глухой звук','Открыть заслонку за 5 мин до конца для сушки корочки'],
+        proper:     ['Глубокая растрескавшаяся корочка — правильная реакция Майяра','Внутренняя температура: 96–98°C в центре','Охлаждать на решётке минимум 45 минут перед разрезкой'],
+        overbaked:  ['Снизить температуру духовки на 10–15°C после первых 20 минут','Высокая влажность — следить за цветом в последние 10 мин особенно внимательно','При быстром потемнении накрыть бумагой','Проверить калибровку термостата — духовка может работать горячее'],
+      }
+    },
+    tiger_bread: {
+      name: 'Tiger Bread', desc: 'Тигровый хлеб — белое тесто, рисовая паста сверху, овальная буханка',
+      advice: {
+        underbaked: ['Рисовой пасте нужно больше тепла — продлить выпечку на 4–6 минут','Цель — глубокий оранжево-коричневый узор, не бледно-жёлтый','Поднять верхний нагрев — тигровый цвет формируется от излучения сверху','Проверить консистенцию рисовой пасты — слишком густая колеруется неравномерно'],
+        proper:     ['Узор правильного насыщенного оранжевого цвета — хорошее развитие пасты','Корочка должна быть твёрдой и хрустящей при постукивании','Охлаждать 20–30 минут перед нарезкой'],
+        overbaked:  ['Рисовая паста горит — снизить верхний нагрев или сократить выпечку на 3–5 минут','Узор должен быть оранжево-коричневым, не тёмно-коричневым/чёрным','Снизить температуру духовки на 10°C для следующей партии','Проверить рецепт пасты — избыток сахара ускоряет потемнение'],
+      }
+    },
+  },
+  kk: {
+    ancient800: {
+      name: 'Ancient Loaf 800г', desc: 'Ежелгі дәнді нан (форма), 800г — қою шаңды қыртыс',
+      advice: {
+        underbaked: ['Дека температурасын 5–10°C арттырыңыз','Пісіру уақытын 3–5 минутқа ұзартыңыз','Бу берілісін тексеріңіз — артық бу қыртыстың қоңырлануына кедергі жасайды','Жүктеуден бұрын пештің толық қыздырылғанын тексеріңіз'],
+        proper:     ['Пісіру параметрлері дұрыс — ағымдағы параметрлерді сақтаңыз','Партия бойынша бірқалыпты бақылаңыз','Анықтама үшін температура мен уақытты жазып алыңыз'],
+        overbaked:  ['Дека температурасын 5–10°C төмендетіңіз','Пісіру уақытын 2–4 минутқа қысқартыңыз','Пеш калибровкасын тексеріңіз','Буды ертерек өшіруді қарастырыңыз'],
+      }
+    },
+    ancient400: {
+      name: 'Ancient Loaf 400г', desc: 'Ежелгі дәнді нан (форма), 400г',
+      advice: {
+        underbaked: ['Дека температурасын 5–10°C арттырыңыз','Пісіру уақытын 2–4 минутқа ұзартыңыз','Кіші нандар тезірек қоңырланады — әдеттегі уақыттан 5 минут бұрын тексеріңіз','Пеш алдын ала жылытылғанын тексеріңіз'],
+        proper:     ['Параметрлер дұрыс — ағымдағы параметрлерді сақтаңыз','Ішкі температура 94–96°C болуы тиіс'],
+        overbaked:  ['Дека температурасын 5°C төмендетіңіз','Пісіру уақытын 2–3 минутқа қысқартыңыз','400г нан жұқалау — қайта бояу тез болады','Пеш калибровкасын тексеріңіз'],
+      }
+    },
+    ancient_bloomer: {
+      name: 'Ancient Bloomer 800г', desc: 'Ежелгі дәнді блумер, 800г — кесілген сопақша',
+      advice: {
+        underbaked: ['Дека температурасын 5°C арттырыңыз','Пісіруді 3–4 минутқа ұзартыңыз','Алғашқы 15 мин өткен соң тесікті ашыңыз','Кесіктер толық көтерілу үшін жеткілікті терең болуы тиіс'],
+        proper:     ['Түс пен қыртыс дамуы дұрыс','Кесік бүкіл ұзындығы бойынша бірқалыпты ашылғанын тексеріңіз','Ішкі температура 95–97°C болуы тиіс'],
+        overbaked:  ['Жоғарғы жылуды 5°C төмендетіңіз','Пісіруді 2–3 минутқа қысқартыңыз','Ыстық нүктелер болса, науаларды жартысына айналдырыңыз'],
+      }
+    },
+    classic_sourdough: {
+      name: 'Classic Sourdough 800г', desc: 'Классикалық ашытқы нан, 800г — кесілген сопақша',
+      advice: {
+        underbaked: ['Дека температурасын 5°C арттырыңыз','Аз буда 3–5 минутқа ұзартыңыз','Буды шығармас бұрын толық көтерілуін күтіңіз'],
+        proper:     ['Қыртыс түсі дұрыс','Ішкі температура 96–98°C болуы тиіс'],
+        overbaked:  ['Жоғарғы жылуды 5°C төмендетіңіз','2–3 минутқа қысқартыңыз'],
+      }
+    },
+    rustic_sourdough: {
+      name: 'Rustic Sourdough', desc: 'Дәстүрлі ашытқы нан, 400г & 800г — дөңгелек, ұнмен себілген',
+      advice: {
+        underbaked: ['Тас/дека температурасын арттырыңыз — мақсат 240°C','Пісіруді 5–8 минутқа ұзартыңыз','Түбін тоқылдатыңыз — іші қуыс дыбыс дайындығын білдіреді','Ескерту: ұнды себу жоғарғы қыртысты ашықтатады — бүйірлерін тексеріңіз'],
+        proper:     ['Қыртыс дамуы дұрыс','Ішкі температура 96–98°C болуы тиіс','Кесуден бұрын кемінде 1 сағат суытыңыз'],
+        overbaked:  ['Дека температурасын 10°C төмендетіңіз','Тым тез қараюда қағазбен жабыңыз'],
+      }
+    },
+    country_sourdough: {
+      name: 'Country Sourdough', desc: 'Деревендік ашытқы нан — кесілген, қою жарылған қыртыс',
+      advice: {
+        underbaked: ['Қыртысқа көбірек түс керек — 5–8 минутқа ұзартыңыз','Соңғы кептіруге арналған дека температурасы кемінде 230°C болуы тиіс','Түбін тоқылдатыңыз — іші қуыс дыбыс шығуы тиіс'],
+        proper:     ['Терең жарылған қыртыс — дұрыс Майяр реакциясы','Ішкі температура: 96–98°C орталықта','Кесуден бұрын тордың үстінде кемінде 45 минут суытыңыз'],
+        overbaked:  ['Алғашқы 20 минуттан кейін пеш температурасын 10–15°C төмендетіңіз','Тез қараюда қағазбен жабыңыз'],
+      }
+    },
+    tiger_bread: {
+      name: 'Tiger Bread', desc: 'Жолбарыс нан — ақ тесто, күрішті паста жоғарыда, сопақша',
+      advice: {
+        underbaked: ['Күріш пастасына көбірек жылу керек — 4–6 минутқа ұзартыңыз','Мақсат: терең қызғылт-қоңыр үлгі, сарғыш емес','Жоғарғы жылуды арттырыңыз — жолбарыс түсі жоғарыдан сәулелену арқылы пайда болады'],
+        proper:     ['Үлгі дұрыс терең қызғылт — паста жақсы дамыған','Қыртыс тоқылдатқанда берік және хрусталы болуы тиіс'],
+        overbaked:  ['Күріш пастасы жанып жатыр — жоғарғы жылуды азайтыңыз немесе 3–5 минутқа қысқартыңыз','Үлгі қызғылт-қоңыр болуы тиіс, қара емес'],
+      }
+    },
+  },
+  pl: {
+    ancient800: {
+      name: 'Ancient Loaf 800g', desc: 'Chleb z dawnych zbóż w foremce, 800g — ciemna posypana skórka',
+      advice: {
+        underbaked: ['Zwiększ temperaturę pieca o 5–10°C','Wydłuż czas pieczenia o 3–5 minut','Sprawdź podawanie pary — nadmiar pary hamuje rumienienie skórki','Upewnij się, że piec jest w pełni nagrzany przed załadunkiem'],
+        proper:     ['Parametry pieczenia są prawidłowe — utrzymaj bieżące ustawienia','Monitoruj jednolitość koloru w całej partii','Zapisz temperaturę i czas dla odniesienia'],
+        overbaked:  ['Obniż temperaturę pieca o 5–10°C','Skróć czas pieczenia o 2–4 minuty','Sprawdź kalibrację pieca — termostat może zaniżać wskazania','Rozważ wcześniejsze odcięcie pary'],
+      }
+    },
+    ancient400: {
+      name: 'Ancient Loaf 400g', desc: 'Chleb z dawnych zbóż w foremce, 400g',
+      advice: {
+        underbaked: ['Zwiększ temperaturę pieca o 5–10°C','Wydłuż czas pieczenia o 2–4 minuty','Mniejsze bochenki brązowieją szybciej — sprawdź 5 min przed planowanym końcem','Upewnij się, że piec jest w pełni nagrzany'],
+        proper:     ['Parametry pieczenia są prawidłowe','Temperatura wewnętrzna powinna wynosić 94–96°C'],
+        overbaked:  ['Obniż temperaturę pieca o 5°C','Skróć czas pieczenia o 2–3 minuty','Bochenek 400g jest cieńszy — przepieczenie następuje szybko'],
+      }
+    },
+    ancient_bloomer: {
+      name: 'Ancient Bloomer 800g', desc: 'Bloomer z dawnych zbóż, 800g — nacinany owal',
+      advice: {
+        underbaked: ['Zwiększ temperaturę pieca o 5°C','Wydłuż pieczenie o 3–4 minuty','Sprawdź czas otwarcia zaworu — otwierać po pierwszych 15 min','Upewnij się, że nacięcia są wystarczająco głębokie'],
+        proper:     ['Kolor i rozwój skórki są prawidłowe','Sprawdź, czy nacięcie otworzyło się równomiernie','Temperatura wewnętrzna powinna wynosić 95–97°C'],
+        overbaked:  ['Obniż górne ciepło o 5°C','Skróć pieczenie o 2–3 minuty','Obracaj blachy w połowie pieczenia jeśli są gorące miejsca'],
+      }
+    },
+    classic_sourdough: {
+      name: 'Classic Sourdough 800g', desc: 'Klasyczny chleb na zakwasie, 800g — nacinany owal',
+      advice: {
+        underbaked: ['Zwiększ temperaturę pieca o 5°C','Wydłuż pieczenie o 3–5 min przy mniejszej ilości pary','Zapewnij pełny wzrost przed odprowadzeniem pary'],
+        proper:     ['Kolor skórki jest prawidłowy','Temperatura wewnętrzna powinna wynosić 96–98°C w centrum'],
+        overbaked:  ['Obniż górne ciepło o 5°C, zachowaj dolne','Skróć pieczenie o 2–3 minuty'],
+      }
+    },
+    rustic_sourdough: {
+      name: 'Rustic Sourdough', desc: 'Rustykalny chleb na zakwasie, 400g & 800g — okrągły, posypany mąką',
+      advice: {
+        underbaked: ['Zwiększ temperaturę kamienia/pieca — cel 240°C','Wydłuż pieczenie o 5–8 minut (wysoka hydracja wymaga dłuższego suszenia)','Pukaj w spód — głuchy dźwięk potwierdza gotowość','Uwaga: obfita mąka sprawia, że górna skórka wydaje się jaśniejsza — sprawdź boki'],
+        proper:     ['Rozwój skórki jest prawidłowy','Temperatura wewnętrzna powinna wynosić 96–98°C w centrum','Chłodź minimum 1 godzinę przed krojeniem'],
+        overbaked:  ['Obniż temperaturę pieca o 10°C po początkowym wzroście','Przykryj papierem w ostatniej trzeciej części pieczenia jeśli skórka ciemnieje zbyt szybko'],
+      }
+    },
+    country_sourdough: {
+      name: 'Country Sourdough', desc: 'Wiejski chleb na zakwasie — nacinany, ciemna popękana skórka',
+      advice: {
+        underbaked: ['Skórka potrzebuje więcej koloru — wydłuż pieczenie o 5–8 minut','Upewnij się, że temperatura pieca wynosi co najmniej 230°C','Pukaj w spód — powinien wydawać głuchy dźwięk'],
+        proper:     ['Głęboka popękana skórka — prawidłowa reakcja Maillarda','Temperatura wewnętrzna: 96–98°C w centrum','Chłodź na kratce minimum 45 minut przed krojeniem'],
+        overbaked:  ['Obniż temperaturę pieca o 10–15°C po pierwszych 20 minutach','Przykryj papierem przy zbyt szybkim ciemnieniu'],
+      }
+    },
+    tiger_bread: {
+      name: 'Tiger Bread', desc: 'Chleb tygrys — białe ciasto, pasta ryżowa na wierzchu, owal',
+      advice: {
+        underbaked: ['Pasta ryżowa potrzebuje więcej ciepła — wydłuż pieczenie o 4–6 minut','Cel: głęboki pomarańczowo-brązowy wzór, nie blado-żółty','Zwiększ górne ciepło — kolor tygrysa pochodzi od promieniowania z góry'],
+        proper:     ['Wzór ma prawidłowy głęboki pomarańczowy kolor','Skórka powinna być twarda i chrupiąca','Chłodź 20–30 minut przed krojeniem'],
+        overbaked:  ['Pasta ryżowa się pali — obniż górne ciepło lub skróć pieczenie o 3–5 minut','Wzór powinien być pomarańczowo-brązowy, nie ciemnobrązowy/czarny'],
+      }
+    },
+  },
+};
+
+// Product structure (threshold & shade data are language-independent)
 const PRODUCTS = [
   {
-    id: 'ancient',
-    icon: '🌾',
-    name: 'Ancient Loaf',
-    desc: 'Ancient grain, 400g & 800g — dark dusted crust',
-    thresholds: {
-      underbaked: { max: 44 },
-      proper:     { min: 44, max: 65 },
-      overbaked:  { min: 65 }
-    },
-    advice: {
-      underbaked: [
-        'Increase deck temperature by 5–10°C',
-        'Extend bake time by 3–5 minutes',
-        'Check steam injection — excess steam prevents crust browning',
-        'Ensure oven is fully preheated before loading'
-      ],
-      proper: [
-        'Bake parameters are correct — maintain current settings',
-        'Monitor consistency across the batch',
-        'Log temperature and time for reference'
-      ],
-      overbaked: [
-        'Reduce deck temperature by 5–10°C',
-        'Shorten bake time by 2–4 minutes',
-        'Check oven calibration — thermostat may read low',
-        'Consider earlier steam-off to slow browning'
-      ]
-    }
+    id: 'ancient800', icon: '🌾',
+    thresholds: { underbaked: { max: 50 }, proper: { min: 50, max: 62 }, overbaked: { min: 62 } },
+    shadeCard: [
+      { r:159, g:121, b:107, label:'light',  darkness:48.6 },
+      { r:155, g:108, b:93,  label:'target', darkness:52.9 },
+      { r:116, g:81,  b:77,  label:'tooD',   darkness:64.2 },
+    ],
   },
   {
-    id: 'ancient_bloomer',
-    icon: '🍞',
-    name: 'Ancient Bloomer',
-    desc: 'Ancient grain bloomer, 800g — scored oval',
-    thresholds: {
-      underbaked: { max: 42 },
-      proper:     { min: 42, max: 63 },
-      overbaked:  { min: 63 }
-    },
-    advice: {
-      underbaked: [
-        'Increase deck temperature by 5°C',
-        'Extend bake by 3–4 minutes',
-        'Check steam vent timing — open vent after first 15 min',
-        'Ensure scoring is deep enough to allow full oven spring'
-      ],
-      proper: [
-        'Colour and crust development are on target',
-        'Check score has opened evenly along the full length',
-        'Internal temperature should read 95–97°C'
-      ],
-      overbaked: [
-        'Reduce top heat by 5°C',
-        'Shorten bake by 2–3 minutes',
-        'Rotate trays halfway through if oven has hot spots',
-        'Check fermentation time — over-proofed dough browns faster'
-      ]
-    }
+    id: 'ancient400', icon: '🌾',
+    thresholds: { underbaked: { max: 52 }, proper: { min: 52, max: 61 }, overbaked: { min: 61 } },
+    shadeCard: [
+      { r:149, g:121, b:111, label:'light',  darkness:49.8 },
+      { r:132, g:102, b:93,  label:'target', darkness:57.0 },
+      { r:112, g:87,  b:82,  label:'tooD',   darkness:63.2 },
+    ],
   },
   {
-    id: 'classic_sourdough',
-    icon: '🫓',
-    name: 'Classic Sourdough',
-    desc: 'Classic sourdough, 800g — scored oval, open crumb',
-    thresholds: {
-      underbaked: { max: 33 },
-      proper:     { min: 33, max: 54 },
-      overbaked:  { min: 54 }
-    },
-    advice: {
-      underbaked: [
-        'Increase deck temperature by 5°C',
-        'Extend bake by 3–5 minutes at lower steam',
-        'Ensure full oven spring before venting steam',
-        'Score depth may need adjustment — shallow scores trap moisture'
-      ],
-      proper: [
-        'Crust colour is on target',
-        'Check bottom crust — should be firm and evenly coloured',
-        'Internal temperature should read 96–98°C at centre'
-      ],
-      overbaked: [
-        'Reduce top heat by 5°C, maintain bottom heat',
-        'Shorten bake by 2–3 minutes',
-        'Load at consistent intervals to stabilise oven temperature',
-        'Check if proofing was too long — over-proofed dough browns faster'
-      ]
-    }
+    id: 'ancient_bloomer', icon: '🍞',
+    thresholds: { underbaked: { max: 53 }, proper: { min: 53, max: 61 }, overbaked: { min: 61 } },
+    shadeCard: [
+      { r:151, g:118, b:100, label:'light',  darkness:50.7 },
+      { r:132, g:90,  b:76,  label:'target', darkness:60.4 },
+      { r:118, g:87,  b:80,  label:'tooD',   darkness:62.6 },
+    ],
   },
   {
-    id: 'rustic_sourdough',
-    icon: '🌿',
-    name: 'Rustic Sourdough',
-    desc: 'Rustic sourdough, 400g & 800g — round, flour-dusted',
-    thresholds: {
-      underbaked: { max: 40 },
-      proper:     { min: 40, max: 63 },
-      overbaked:  { min: 63 }
-    },
-    advice: {
-      underbaked: [
-        'Increase stone/deck temperature — target 240°C',
-        'Extend bake by 5–8 minutes (high hydration needs longer dry-out)',
-        'Knock on base — hollow sound confirms doneness regardless of colour',
-        'Note: heavy flour dusting makes top crust appear lighter — check sides'
-      ],
-      proper: [
-        'Crust development is correct — good colour on sides and base',
-        'Internal temperature should read 96–98°C at centre',
-        'Allow 1 hour minimum cooling before cutting'
-      ],
-      overbaked: [
-        'Reduce deck temperature by 10°C after initial spring (first 15 min)',
-        'Cover with paper for final third of bake if crust darkening too fast',
-        'Check if oven has hot spots — rotate loaves halfway through',
-        'Shorter fermentation may help control browning rate'
-      ]
-    }
+    id: 'classic_sourdough', icon: '🫓',
+    thresholds: { underbaked: { max: 54 }, proper: { min: 54, max: 60 }, overbaked: { min: 60 } },
+    shadeCard: [
+      { r:147, g:107, b:94,  label:'light',  darkness:53.9 },
+      { r:134, g:97,  b:87,  label:'target', darkness:58.2 },
+      { r:118, g:84,  b:78,  label:'tooD',   darkness:62.0 },
+    ],
   },
   {
-    id: 'country_sourdough',
-    icon: '🫙',
-    name: 'Country Sourdough',
-    desc: 'Country sourdough — round scored loaf, dark crackled crust',
-    thresholds: {
-      underbaked: { max: 55 },
-      proper:     { min: 55, max: 72 },
-      overbaked:  { min: 72 }
-    },
-    advice: {
-      underbaked: [
-        'Crust needs more colour — extend bake 5–8 minutes',
-        'Ensure deck temperature is at least 230°C for final dry-out',
-        'Knock on base — should sound hollow before pulling',
-        'Open oven damper in last 5 min to aid crust drying'
-      ],
-      proper: [
-        'Deep crackled crust achieved — correct Maillard development',
-        'Check internal temperature: 96–98°C at centre',
-        'Allow to cool on wire rack minimum 45 minutes before cutting'
-      ],
-      overbaked: [
-        'Reduce oven temperature 10–15°C after first 20 minutes',
-        'Country sourdough has high water content — monitor colour closely in last 10 min',
-        'If crust darkens too fast, tent loosely with paper',
-        'Check thermostat calibration — oven may be running hot'
-      ]
-    }
+    id: 'rustic_sourdough', icon: '🌿',
+    thresholds: { underbaked: { max: 42 }, proper: { min: 42, max: 60 }, overbaked: { min: 60 } },
+    shadeCard: null,
   },
   {
-    id: 'tiger_bread',
-    icon: '🐯',
-    name: 'Tiger Bread',
-    desc: 'Tiger bread — white dough, rice paste topping, oval loaf',
-    // Tiger bread: rice paste topping gives distinctive crackled orange pattern.
-    // Sampling zone: top_centre captures the characteristic tiger pattern best.
-    // Calibrated from production photo: proper = top_centre ~58.7
-    // Underbaked tiger bread is pale cream/yellow; proper is deep orange-brown.
-    sampleZone: 'top',  // override: use top-centre zone (tiger pattern on top)
-    thresholds: {
-      underbaked: { max: 44 },
-      proper:     { min: 44, max: 68 },
-      overbaked:  { min: 68 }
-    },
-    advice: {
-      underbaked: [
-        'Rice paste topping needs more heat to develop colour — extend bake 4–6 minutes',
-        'Target deep orange-brown pattern, not pale yellow',
-        'Increase top heat if deck oven — tiger colour comes from radiant heat above',
-        'Check rice paste consistency — too thick will colour unevenly'
-      ],
-      proper: [
-        'Tiger pattern is correct deep orange — good rice paste development',
-        'Crust should be firm and crisp when tapped',
-        'Allow 20–30 minutes cooling before slicing'
-      ],
-      overbaked: [
-        'Rice paste is burning — reduce top heat or shorten bake by 3–5 minutes',
-        'Tiger pattern should be orange-brown, not dark brown/black',
-        'Lower oven temperature 10°C for next batch',
-        'Check rice paste recipe — excess sugar accelerates browning'
-      ]
-    }
-  }
+    id: 'country_sourdough', icon: '🫙',
+    thresholds: { underbaked: { max: 53 }, proper: { min: 53, max: 59 }, overbaked: { min: 59 } },
+    shadeCard: [
+      { r:153, g:114, b:101, label:'light',  darkness:51.3 },
+      { r:131, g:96,  b:91,  label:'target', darkness:58.5 },
+      { r:118, g:94,  b:93,  label:'tooD',   darkness:60.4 },
+    ],
+  },
+  {
+    id: 'tiger_bread', icon: '🐯',
+    sampleZone: 'top',
+    thresholds: { underbaked: { max: 44 }, proper: { min: 44, max: 68 }, overbaked: { min: 68 } },
+    shadeCard: null,
+  },
 ];
+
+function getProductData(id) {
+  const base = PRODUCTS.find(p => p.id === id);
+  const lang_data = (PRODUCTS_DATA[LANG] || PRODUCTS_DATA.en)[id] || PRODUCTS_DATA.en[id];
+  return { ...base, ...lang_data };
+}
 
 // ── STATE ────────────────────────────────────────────────────────────
 let selectedProduct = null;
@@ -687,24 +957,30 @@ let photoLoaded = false;
 let lastResult = null;
 
 // ── INIT ─────────────────────────────────────────────────────────────
-function init() {
+function renderProducts() {
   const grid = document.getElementById('productGrid');
   PRODUCTS.forEach(p => {
+    const pd = getProductData(p.id);
     const card = document.createElement('div');
     card.className = 'product-card';
     card.dataset.id = p.id;
     card.innerHTML = `
       <span class="product-icon">${p.icon}</span>
       <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-desc">${p.desc}</div>
+        <div class="product-name">${pd.name}</div>
+        <div class="product-desc">${pd.desc}</div>
       </div>
       <div class="product-check">✓</div>
     `;
     card.addEventListener('click', () => selectProduct(p.id));
+    // Re-apply selection highlight if still selected
+    if (selectedProduct && selectedProduct.id === p.id) card.classList.add('selected');
     grid.appendChild(card);
   });
+}
 
+function init() {
+  renderProducts();
   document.getElementById('fileGallery').addEventListener('change', onFileSelected);
   document.getElementById('fileCamera').addEventListener('change', onFileSelected);
   document.getElementById('btnNext').addEventListener('click', goToCamera);
@@ -717,11 +993,29 @@ function selectProduct(id) {
     c.classList.toggle('selected', c.dataset.id === id);
   });
   document.getElementById('btnNext').disabled = false;
+  renderShadeCard(id);
+}
+
+function renderShadeCard(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const sec = document.getElementById('shadeCardSection');
+  const swatches = document.getElementById('shadeSwatches');
+  if (!p || !p.shadeCard) { sec.style.display = 'none'; return; }
+  const L = I18N[LANG] || I18N.en;
+  const labelMap = { light: L.shadeLabels.light, target: L.shadeLabels.target, tooD: L.shadeLabels.tooD };
+  swatches.innerHTML = p.shadeCard.map(s => `
+    <div class="shade-swatch" style="background:rgb(${s.r},${s.g},${s.b})">
+      <span class="shade-swatch-label">${labelMap[s.label] || s.label}</span>
+      <span class="shade-swatch-val">${s.darkness.toFixed(0)}</span>
+    </div>
+  `).join('');
+  sec.style.display = 'block';
 }
 
 function goToCamera() {
   if (!selectedProduct) return;
-  document.getElementById('camTitle').textContent = selectedProduct.name;
+  const pd = getProductData(selectedProduct.id);
+  document.getElementById('camTitle').textContent = pd.name;
   goTo('screenPhoto');
 }
 
@@ -849,27 +1143,25 @@ function runAnalysis() {
 }
 
 // ── RESULT DISPLAY ───────────────────────────────────────────────────
-const VERDICTS = {
-  underbaked: { icon: '💧', label: 'Underbaked', cls: 'underbaked' },
-  proper:     { icon: '✅', label: 'Proper Baked', cls: 'proper' },
-  overbaked:  { icon: '🔥', label: 'Overbaked', cls: 'overbaked' }
-};
+const VERDICT_ICONS = { underbaked: '💧', proper: '✅', overbaked: '🔥' };
+const VERDICT_CLS   = { underbaked: 'underbaked', proper: 'proper', overbaked: 'overbaked' };
 
 function showResult(res) {
-  const v = VERDICTS[res.verdict];
-  const p = selectedProduct;
+  const L = I18N[LANG] || I18N.en;
+  const icon = VERDICT_ICONS[res.verdict];
+  const cls  = VERDICT_CLS[res.verdict];
+  const label = L.verdicts[res.verdict];
+  const pd = getProductData(selectedProduct.id);
 
   // Verdict block
   const vb = document.getElementById('verdictBlock');
-  vb.className = 'verdict-block ' + v.cls;
-  document.getElementById('verdictIcon').textContent = v.icon;
-  document.getElementById('verdictLabel').textContent = v.label;
-  document.getElementById('verdictProd').textContent = p.name;
-  document.getElementById('resultProduct').textContent = p.name;
+  vb.className = 'verdict-block ' + cls;
+  document.getElementById('verdictIcon').textContent = icon;
+  document.getElementById('verdictLabel').textContent = label;
+  document.getElementById('verdictProd').textContent = pd.name;
+  document.getElementById('resultProduct').textContent = pd.name;
 
   // Colour bar cursor
-  // Map darkness score 0–100 to position 0–100%
-  // Left = pale (underbaked), Right = dark (overbaked)
   const pct = Math.min(100, Math.max(0, res.darknessScore));
   document.getElementById('colorCursor').style.left = pct + '%';
 
@@ -881,8 +1173,8 @@ function showResult(res) {
     `Brightness: ${(100 - res.darknessScore).toFixed(0)}%  ·  ` +
     `Darkness: ${res.darknessScore.toFixed(0)}%`;
 
-  // Advice
-  const advice = p.advice[res.verdict];
+  // Advice (from localised product data)
+  const advice = pd.advice[res.verdict] || [];
   const list = document.getElementById('adviceList');
   list.innerHTML = '';
   advice.forEach(a => {
@@ -908,6 +1200,7 @@ function showToast(msg, dur = 2500) {
 
 // ── START ────────────────────────────────────────────────────────────
 init();
+applyLang();
 </script>
 
 <!-- Install Banner -->
