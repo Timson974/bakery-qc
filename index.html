@@ -1206,12 +1206,16 @@ function getSampleZones() {
       { x:0.63, y:0.05, w:0.22, h:0.35 },
     ];
   }
-  // Default: 4 zones covering lower half — catches multiple loaves
+  // Default: 8 zones — 2 rows × 4 columns covering full frame (top + bottom)
   return [
-    { x:0.08, y:0.45, w:0.20, h:0.42 },
-    { x:0.30, y:0.48, w:0.20, h:0.42 },
-    { x:0.52, y:0.48, w:0.20, h:0.42 },
-    { x:0.72, y:0.45, w:0.20, h:0.42 },
+    { x:0.08, y:0.05, w:0.20, h:0.38 },  // row 1 (top)
+    { x:0.30, y:0.05, w:0.20, h:0.38 },
+    { x:0.52, y:0.05, w:0.20, h:0.38 },
+    { x:0.72, y:0.05, w:0.20, h:0.38 },
+    { x:0.08, y:0.52, w:0.20, h:0.38 },  // row 2 (bottom)
+    { x:0.30, y:0.52, w:0.20, h:0.38 },
+    { x:0.52, y:0.52, w:0.20, h:0.38 },
+    { x:0.72, y:0.52, w:0.20, h:0.38 },
   ];
 }
 
